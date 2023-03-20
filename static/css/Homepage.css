@@ -247,7 +247,7 @@ body{
 #categories.contentBlock{
     overflow-x:auto;
     margin: 0 280px;
-    height: 350px;
+    height: 180px;
     border-radius: 10px;
 }
 #categories ul{

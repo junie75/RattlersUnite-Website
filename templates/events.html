@@ -1,0 +1,42 @@
+{% extends 'listtemplate.html' %}
+
+{% block content %}
+    <div class="contentBlock">
+        <p class="title">Events</p>
+        <!---Three content squares? or scrollbar with content-->
+        <div class="contentBoxes">
+            {% for post in events %}
+                <a>
+                    <div class="contentBox">
+                        <img class="boxPic" src="https://picsum.photos/200/200">
+                        <div class="boxDetails">
+                            <p class="boxName">{{ post['name'] }}</p>
+                            <p class="orgName">{{ post['organization'] }}</p>
+                            <p class="info"> <span class="boxInfo">Event Information</span> 
+                                <br>{{ post['eventDescription'] }}</p>
+                        </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div id="categories" class="contentBlock">
+        <p class="title">Categories</p>
+        <div id="categories">
+            <ul>
+                <li><a>Cooking</a></li>
+                <li><a>Dance</a></li>
+                <li><a>Art</a></li>
+                <li><a>Gaming</a></li>
+                <li><a>Sports</a></li>
+                <li><a>STEM</a></li>
+                <li><a>Music</a></li>
+                <li><a>Travel</a></li>
+                <li><a>Health</a></li>
+                <li><a>Education</a></li>
+                <li><a>Entertainment</a></li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
