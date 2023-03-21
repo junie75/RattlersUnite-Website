@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="static/css/base.css">
+    <title>Rattlers Unite!</title>
+</head>
+<body>
+    <div class="topnav" stylesheet="">
+        <a class="active" href="{{ url_for('main') }}">Home</a>
+        <a href="{{ url_for('events') }}">Events</a>
+        <a href="{{ url_for('organizations') }}">Organizations</a>
+        <a href="#leaderboard">Leaderboard</a>
+        <div class="login">
+            <a href="#login">Login</a>
+        </div>
+    </div>
+    <div class="container">
+        <img class="banner" src="static/defaults/friendsHug.png"/>
+        <div class="centered">
+            <p class="welcome">
+                Welcome to Rattler's Unite!
+            </p>
+        </div>
+        <img src="static/defaults/profilePic.png">
+    </div>
+
+    {% block content %} 
+    {% endblock %}
+
+    <footer>
+        <ul>
+            <p>Copyright © 2023 Rattlers Unite Team. All rights reserved.
+        </ul>
+    </footer>
+</body>
+</html>
+

@@ -1,20 +1,17 @@
-{% extends 'listtemplate.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
     <p class="title">Organizations</p>
-    <!---Three content squares? or scrollbar with content-->
-    <div class="contentBoxes">
+    <div class="listmenu">
         {% for o in organizations %}
             <a>
                 <div class="contentBox">
-                    <img class="boxPic" src="https://picsum.photos/200/200">
+                    <img class="boxPic" src="https://picsum.photos/200/200"/>
                     <div class="boxDetails">
                         <p class="boxName">{{ o['name'] }}</p>
-                        <p class="info"> <span class="boxInfo">Organization Information</span> 
-                            <br>{{ o['aboutus'] }}</p>
                     </div>
-            </div>
-        </a>
+                </div>
+            </a>
         {% endfor %}
     </div>
 {% endblock %}
