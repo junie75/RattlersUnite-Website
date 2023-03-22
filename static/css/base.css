@@ -200,6 +200,74 @@ div.listmenu a {
 
 }
 
+/*Leaderboard*/
+
+/*background of leaderboard*/
+.leaderboardCard{
+    background-color: white;
+    height: 500px;
+    width: 1000px;
+    margin: 30px auto;
+    border-radius: 10px;
+    position:relative;
+    overflow-y: scroll;
+    overflow-x:visible;
+}
+
+/*header at top of leaderboard*/
+.boardbanner{
+    background-color: #2d5dd2;
+    background-color: #a0c6e6;
+    background-color: #58cfcb;
+
+    padding:15px;
+    margin: 15px 20px 0 20px;
+    border-radius: 10px;
+}
+
+.boardbanner p{
+    font-size: 25px;
+    text-align: center;
+    color: white;
+}
+
+/*Leaderboard table*/
+.leaderboard{
+    border-collapse: collapse;
+    margin: 20px auto;
+    width: 900px;
+    counter-reset: step;
+    position: relative;
+}
+
+/*cell borders*/
+.leaderboard td{
+    border-top: 1px solid gray;
+    border-bottom: 1px solid gray;
+    padding: 15px 0;
+    font-size: 18px;
+}
+
+.user{
+    /*border-right: 1px solid black;*/
+    width: 80%;
+}
+
+.points{
+    text-align: right;
+    width: 20%;
+}
+
+/*leaderboard rank/counter*/
+.leaderboard td:first-child:before{
+    counter-increment: step;
+    content: counter(step, decimal);
+    color: blue;;
+    font-size: 18px;
+    position: absolute;
+    left: -25px;
+}
+
 /* Footer */
 footer{
     background-color:#1a3477;
