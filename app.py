@@ -63,5 +63,9 @@ def login():
 def signup():
     return render_template("SignUp.html")
 
+@app.route("/orgLogIn")
+def orgLogIn():
+    return render_template("orgLogIn.html")
+
 if __name__ == "__main__":
     app.run()

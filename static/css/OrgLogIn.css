@@ -1,0 +1,110 @@
+body
+{
+    margin: 0;
+    padding:0;
+    font-family: sans-serif;
+    background:url(../defaults/StMarys.jpg);
+    background-size:cover;
+   
+}
+
+/*Box class*/
+.box
+{
+    width:300px;
+    height: 550px;
+    padding:30px 25px;
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform : translate(-50%, -50%);
+    background:url(../defaults/PurpleTrans.jpg);
+    text-align:center;
+}
+
+/*Header for page*/
+.box h1
+{
+    color:rgb(0, 0, 0);
+    text-transform: uppercase;
+    font-weight: 700;
+    font-family: fantasy;
+}
+
+/*password box*/
+.box input[type = "text"],.box input[type="password"]
+{
+    border: 0;
+    background:none;
+    display:line;
+    margin: 20px auto;
+    text-align: center;
+    border: 3px solid rgb(22, 120, 218);
+    padding: 14px 35px;
+    width:200px;
+    outline:none;
+    color:rgb(0, 0, 0);
+    border-radius:24px;
+    transition:0.25px;
+}
+
+
+
+
+
+/*login box*/
+.box input[type = "submit"]
+{
+    border: 0;
+    background:none;
+    display:block;
+    margin: 20px auto;
+    text-align: center;
+    /*border: 3px solid rgb(0, 0, 0);*/
+    padding: 14px 10px;
+    outline:none;
+    color:rgb(0, 0, 0);
+    border-radius:24px;
+    transition:0.25px;
+    cursor:pointer;
+}
+
+.box input[type = "submit"]:hover
+{
+    background:rgb(255, 255, 255);
+    transition: .8s;
+}
+
+/*Container class*/
+.container
+{
+    text-align:left;
+    margin-top: 20px;
+    margin-left: 20px;
+    position:absolute;
+    
+}
+
+/*home button*/
+.btn
+{
+    border: 0;
+    background:none;
+    text-align: left;
+    /*border: 3px solid rgb(22, 120, 218);*/
+    padding: 20px 10px;
+    outline:none;
+    color:rgb(0, 0, 0);
+    background:url(PurpleTrans.jpg);
+    border-radius:100px;
+    transition:0.8s;
+    cursor:pointer;  
+    text-overflow: wrap;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.btn:hover
+{
+    color:white;
+    
+}
