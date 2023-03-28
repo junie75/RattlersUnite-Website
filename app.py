@@ -55,5 +55,13 @@ def leaderboards():
     board = fetch_leaderboards()
     return render_template("leaderboards.html", board=board)
 
+@app.route("/login")
+def login():
+    return render_template("LogIn.html")
+
+@app.route("/signup")
+def signup():
+    return render_template("SignUp.html")
+
 if __name__ == "__main__":
     app.run()
