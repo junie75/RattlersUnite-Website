@@ -52,7 +52,8 @@ def organizations():
 
 @app.route("/leaderboards")
 def leaderboards():
-    board = fetch_leaderboards()
+    #board = fetch_leaderboards()
+    board = None
     return render_template("leaderboards.html", board=board)
 
 @app.route("/login")
