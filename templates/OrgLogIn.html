@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lan="en" and dir="Itr">
 <head>
@@ -17,18 +16,21 @@
             <img src="static/defaults/STMUlogo.jpg">
         </h1>
         <h2>
-            Log In
+            Orginization Log In
         </h2>
-        <input type = "text" name="" placeholder = "Username" id = "username" required>
+        <input type = "text" name="" placeholder = "OrgID" id = "username" required>
         <input type = "password" name="" placeholder = "Password" id = "password" required>
         <input type = "submit" name="" value = "Login" onclick="validate()">
+        
+
         <p class="para-2">
             Don't have an account? <a href="{{ url_for('signup') }}">Sign Up Here</a>
         </p>
-        <p class = "para-3">
-            Not a student?<a href = "{{ url_for('orgLogIn') }}"> Orginazation log in</a>
-        </p>
         
+        <p class = "para-2">
+            Not an Orginaztion?<a href = "{{ url_for('login') }}">Student Log in</a>
+        </p>
+
     </form>
     
 
