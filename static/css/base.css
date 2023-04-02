@@ -30,6 +30,13 @@ body {
     transform: translate(-50%, -50%);
 }
 
+.textCenter {
+    padding: 25px;
+    position: absolute;
+    width: 100%;
+    text-align: center;
+}
+
 /* Banner and Site Text */
 .banner {
     width: 100%;
@@ -155,6 +162,15 @@ div.listmenu a {
 .eventTime{
     color: rgb(126, 126, 126);
     font-size: 11px;
+}
+
+.noEvent{
+    height: 100px; 
+}
+
+.noEventText{
+    color: white;
+    font-size: 28px;
 }
 
 /* Categories */
