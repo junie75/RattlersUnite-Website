@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 ## DB Functions
 def connect_db():
-    conn = sqlite3.connect("./db/events.db")
+    conn = sqlite3.connect("./db/RattlersUnite.db")
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -17,14 +17,15 @@ def fetch_events():
     # Grabs current date
     current_date = datetime.now().isoformat()
     events = conn.execute(
-        f"SELECT name, organization, eventDate FROM Events ORDER BY name"
+        f"SELECT Events.Name, Organizations.Name AS Organization, Date FROM Events JOIN Organizations ON Organizations.ID = Events.Organization ORDER BY Date"
     )
     # Store event data in temp
     temp = events.fetchall()
     # For now loop and remove events that are before the date
     # TODO: Maybe remove dates from SQL DB too.
     for e in temp:
-        if e["eventDate"] < current_date:
+        print(e.keys())
+        if e["Date"] < current_date:
             temp.remove(e)
     return temp
 
@@ -37,7 +38,7 @@ def fetch_organizations():
 
 def fetch_leaderboards():
     conn = connect_db()
-    board = conn.execute("SELECT * FROM Leaderboards")
+    board = conn.execute("SELECT Name, Points FROM Students")
     return board.fetchall()
 
 
@@ -70,8 +71,7 @@ def organizations():
 
 @app.route("/leaderboards")
 def leaderboards():
-    # board = fetch_leaderboards()
-    board = None
+    board = fetch_leaderboards()
     return render_template("leaderboards.html", board=board)
 
 
