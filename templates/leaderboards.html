@@ -7,23 +7,24 @@
         <section class="boardbanner">
             <p>Leaderboard</p>  
         </section>    
-        <!--Add Table for top users(in points)-->
-        <table class="leaderboard">
-          <!--  <tr>
-                <th colspan="2">User</th>
-                <th colspan="3">Points</th>
-            </tr> -->
-
-        <!--Loop here through USERS with most points from high to low-->
-        {% for i in range(10) %}
-            <tr>
-                <td class="user" colspan="2">Joe Goldberg</td><!--Insert student name/username-->
-                <td class="points">30 pts</td>
-            </tr>
-        {% endfor %}
-        <!--End loop-->
-        
-        </table>
+        {% if board %}
+            <table class="leaderboard">
+            {% for b in board %}
+                <tr>
+                    <td class="user" colspan="2">{{ b['Name']}}</td><!--Insert student name/username-->
+                    <td class="points">{{ b['Points']}} pts</td>
+                </tr>
+            {% endfor %}
+            </table>
+        {% else %}
+            <div class="noEvent">
+                <div class="textCenter">
+                    <p>
+                        Leaderboard is currently unavailable.
+                    </p>
+                </div>
+            </div>
+        {% endif %}
     </div> 
 </div>
 

@@ -1,52 +1,72 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <p class="title">Events</p>
-    <div class="listmenu">
+<p class="title">Events</p>
+<div class="listmenu">
+    {% if events %}
         {% for post in events %}
-            <a>
-                <div class="contentBox">
-                    <img class="boxPic" src="https://picsum.photos/200/200"/>
-                    <div class="boxDetails">
-                        <p class="boxName">{{ post['name'] }}</p>
-                        <p class="orgName">{{ post['organization'] }}</p>
-                        <p class="eventTime">{{ post['eventdate']|format_datetime }}</p>
-                    </div>
+        <a>
+            <div class="contentBox">
+                <img class="boxPic" src="https://picsum.photos/200/200" />
+                <div class="boxDetails">
+                    <p class="boxName">{{ post['Name'] }}</p>
+                    <p class="orgName">{{ post['Organization'] }}</p>
+                    <p class="eventTime">{{ post['Date']|format_datetime }}</p>
                 </div>
-            </a>
+            </div>
+        </a>
         {% endfor %}
-    </div>
-
-    <p class="title">Organizations</p>
-    <div class="listmenu">
-        {% for o in organizations %}
-            <a>
-                <div class="contentBox">
-                    <img class="boxPic" src="https://picsum.photos/200/200"/>
-                    <div class="boxDetails">
-                        <p class="boxName">{{ o['name'] }}</p>
-                    </div>
-                </div>
-            </a>
-        {% endfor %}
-    </div>
-
-    <p class="title">Categories</p>
-    <div id="listmenu" class="contentBlock">
-        <div id="categories">
-            <ul>
-                <li><a>Cooking</a></li>
-                <li><a>Dance</a></li>
-                <li><a>Art</a></li>
-                <li><a>Gaming</a></li>
-                <li><a>Sports</a></li>
-                <li><a>STEM</a></li>
-                <li><a>Music</a></li>
-                <li><a>Travel</a></li>
-                <li><a>Health</a></li>
-                <li><a>Education</a></li>
-                <li><a>Entertainment</a></li>
-            </ul>
+    {% else %}
+        <div class="noEvent">
+            <div class="textCenter">
+                <p class="noEventText">
+                    No events are currently scheduled.
+                </p>
+            </div>
         </div>
+    {% endif %}
+</div>
+
+<p class="title">Organizations</p>
+<div class="listmenu">
+    {% if organizations %}
+        {% for o in organizations %}
+        <a>
+            <div class="contentBox">
+                <img class="boxPic" src="https://picsum.photos/200/200" />
+                <div class="boxDetails">
+                    <p class="boxName">{{ o['Name'] }}</p>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+    {% else %}
+        <div class="noEvent">
+            <div class="textCenter">
+                <p class="noEventText">
+                    No organizations are currently available to be displayed.
+                </p>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<p class="title">Categories</p>
+<div id="listmenu" class="contentBlock">
+    <div id="categories">
+        <ul>
+            <li><a>Cooking</a></li>
+            <li><a>Dance</a></li>
+            <li><a>Art</a></li>
+            <li><a>Gaming</a></li>
+            <li><a>Sports</a></li>
+            <li><a>STEM</a></li>
+            <li><a>Music</a></li>
+            <li><a>Travel</a></li>
+            <li><a>Health</a></li>
+            <li><a>Education</a></li>
+            <li><a>Entertainment</a></li>
+        </ul>
     </div>
+</div>
 {% endblock %}

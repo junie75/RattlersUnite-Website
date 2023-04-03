@@ -30,6 +30,13 @@ body {
     transform: translate(-50%, -50%);
 }
 
+.textCenter {
+    padding: 25px;
+    position: absolute;
+    width: 100%;
+    text-align: center;
+}
+
 /* Banner and Site Text */
 .banner {
     width: 100%;
@@ -157,6 +164,15 @@ div.listmenu a {
     font-size: 11px;
 }
 
+.noEvent{
+    height: 100px; 
+}
+
+.noEventText{
+    color: white;
+    font-size: 28px;
+}
+
 /* Categories */
 #categories.contentBlock{
     overflow-x:auto;
@@ -210,8 +226,8 @@ div.listmenu a {
     margin: 30px auto;
     border-radius: 10px;
     position:relative;
-    overflow-y: scroll;
-    overflow-x:visible;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 /*header at top of leaderboard*/
