@@ -32,7 +32,7 @@ def fetch_events():
 
 def fetch_organizations():
     conn = connect_db()
-    orgs = conn.execute("SELECT * FROM Organizations")
+    orgs = conn.execute("SELECT Name FROM Organizations")
     return orgs.fetchall()
 
 
