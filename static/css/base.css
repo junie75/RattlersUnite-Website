@@ -226,8 +226,8 @@ div.listmenu a {
     margin: 30px auto;
     border-radius: 10px;
     position:relative;
-    overflow-y: scroll;
-    overflow-x:visible;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 /*header at top of leaderboard*/
