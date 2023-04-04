@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from datetime import datetime
 import sqlite3
 
@@ -56,6 +56,12 @@ def find_organization(id):
     temp = org.fetchall()
     return temp[0]
 
+def insert_student_data(student_id, password):
+    conn = connect_db()
+    conn.execute("INSERT INTO Students (StudentID, Name) VALUES (?, ?)", (student_id, password))
+    conn.commit()
+    conn.close()
+
 ## Filter Functions
 @app.template_filter()
 def format_datetime(iso):
@@ -112,6 +118,17 @@ def signup():
 @app.route("/orgLogIn")
 def orgLogIn():
     return render_template("orgLogIn.html")
+
+@app.route("/signupMethod", methods=["GET", "POST"])
+def signupMethod():
+    if request.method == "POST":
+        student_id = request.form["student_id"]
+        name = request.form["name"]
+        insert_student_data(student_id, name)
+        return "Data inserted successfully"
+    else:
+        return render_template("SignUp.html")
+
 
 
 if __name__ == "__main__":
