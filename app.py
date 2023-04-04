@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, redirect, render_template, request, url_for
 from datetime import datetime
 import sqlite3
 
@@ -61,9 +61,22 @@ def find_organization(id):
     temp = org.fetchall()
     return temp[0]
 
-def insert_student_data(student_id, password):
+#signup
+def insert_student_data(student_id, name):
     conn = connect_db()
-    conn.execute("INSERT INTO Students (StudentID, Name) VALUES (?, ?)", (student_id, password))
+    conn.execute("INSERT INTO Students (StudentID, Name) VALUES (?, ?)", (student_id, name))
+    conn.commit()
+    conn.close()
+
+#sign in
+def fetch_user(student_id):
+    conn = connect_db()
+    user = conn.execute(f"SELECT * FROM Students WHERE StudentID = '{student_id}'").fetchone()
+    return user
+
+def insert_user(student_id, name):
+    conn = connect_db()
+    conn.execute("INSERT INTO Users (StudentID, Name) VALUES (?, ?)", (student_id, name))
     conn.commit()
     conn.close()
 
@@ -136,6 +149,7 @@ def signup():
 def orgLogIn():
     return render_template("orgLogIn.html")
 
+#Method to allow user to signup
 @app.route("/signupMethod", methods=["GET", "POST"])
 def signupMethod():
     if request.method == "POST":
@@ -146,6 +160,22 @@ def signupMethod():
     else:
         return render_template("SignUp.html")
 
+#Method to allow user to sign in
+@app.route("/loginMethod", methods=["GET", "POST"])
+def loginMethod():
+    if request.method == "POST":
+        student_id = request.form["StudentID"]
+        name = request.form["Name"]
+        user = fetch_user(student_id)
+        if user and user["Name"] == name:
+            # authentication succeeded, redirect to main page
+            return redirect(url_for("main"))
+        else:
+            # authentication failed, show error message
+            return render_template("login.html", error="Invalid username or password")
+    else:
+        # display login form
+        return render_template("login.html")
 
 
 if __name__ == "__main__":
