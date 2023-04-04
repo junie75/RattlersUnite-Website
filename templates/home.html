@@ -22,12 +22,16 @@
                     <p class="noEventText">
                         No events are currently scheduled.
                     </p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
                     
     <p class="title">Organizations</p>
     <div class="listmenu">
         {% if organizations %}
             {% for o in organizations %}
-            <a href="{{ url_for('organizationdetails', id=post['ID']) }}">
+            <a href="{{ url_for('organizationdetails', id=o['ID']) }}">
                 <div class="contentBox">
                     <img class="boxPic" src="https://picsum.photos/200/200" />
                     <div class="boxDetails">

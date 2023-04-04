@@ -5,7 +5,7 @@
     <div class="listmenu">
         {% for post in events %}
             {% if post['Category'] == category %}
-                <a>
+                <a href="{{ url_for('eventdetails', id=post['ID']) }}">
                     <div class="contentBox">
                         <img class="boxPic" src="https://picsum.photos/200/200"/>
                         <div class="boxDetails">
