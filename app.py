@@ -41,11 +41,11 @@ def fetch_events(cat=False):
     # Grab all info but Category if we are not category searching.
     if not cat:
         events = conn.execute(
-            f"SELECT Events.ID, Events.Name, Organizations.Name AS Organization, Date, Location FROM Events JOIN Organizations ON Organizations.ID = Events.Organization ORDER BY Date"
+            f"SELECT Events.ID, Events.Name, Organizations.Name AS Organization, Date, Location, EventIcon FROM Events JOIN Organizations ON Organizations.ID = Events.Organization ORDER BY Date"
         )
     else:
         events = conn.execute(
-            f"SELECT Events.ID, Events.Name, Organizations.Name AS Organization, Date, Location, Category FROM Events JOIN Organizations ON Organizations.ID = Events.Organization ORDER BY Date"
+            f"SELECT Events.ID, Events.Name, Organizations.Name AS Organization, Date, Location, Category, EventIcon FROM Events JOIN Organizations ON Organizations.ID = Events.Organization ORDER BY Date"
         )
 
     temp = events.fetchall()
@@ -82,9 +82,10 @@ def find_event(id: int):
     """
     conn = connect_db()
     event = conn.execute(
-        f"SELECT Events.Name, Organizations.Name AS Organization, Date, Location, Description FROM Events JOIN Organizations ON Organizations.ID = Events.Organization WHERE Events.ID = {id}"
+        f"SELECT Events.Name, Organizations.Name AS Organization, Date, Location, EventImage, Description FROM Events JOIN Organizations ON Organizations.ID = Events.Organization WHERE Events.ID = {id}"
     )
     temp = event.fetchall()
+    print(temp[0].keys())
 
     # Since we are only looking for 1 event by default, we should just
     # return the first and only element

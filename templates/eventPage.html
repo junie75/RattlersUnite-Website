@@ -4,6 +4,9 @@
     <div class="listmenu">
         <div class="eventCard">
             <div class="eventDiv">
+                {% if event['EventImage'] %}
+                    <img src={{ event['EventImage'] }} class="eventImg"/>
+                {% endif %}
                 <p class="eventTitleText">{{ event['Name'] }}</p>
                 <p class="eventInfoText">Date and Time of Event: {{ event['Date']|format_datetime }}</p>
                 <p class="eventInfoText">Location: {{ event['Location'] }}</p>

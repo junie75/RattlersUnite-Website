@@ -7,7 +7,9 @@
             {% for post in events %}
             <a href="{{ url_for('eventdetails', id=post['ID']) }}">
                 <div class="contentBox">
-                    <img class="boxPic" src="https://picsum.photos/200/200" />
+                    {% if post['EventIcon'] %}
+                        <img class="boxPic" src={{ post['EventIcon'] }}/>
+                    {% endif %}
                     <div class="boxDetails">
                         <p class="boxName">{{ post['Name'] }}</p>
                         <p class="orgName">{{ post['Organization'] }}</p>
