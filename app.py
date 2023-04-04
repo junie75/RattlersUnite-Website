@@ -101,7 +101,15 @@ def leaderboards():
 @app.route("/search/<category>")
 def search(category):
     events = fetch_events(True)
-    return render_template("search.html", events=events, category=category)
+
+    # Crappy for loop check for empty categories but it does it's job IG
+    noEvents = True
+    for e in events:
+        if e['Category'] == category:
+            noEvents = False
+            break
+        
+    return render_template("search.html", events=events, category=category, noEvents=noEvents)
 
 @app.route("/eventdetails/<id>")
 def eventdetails(id):

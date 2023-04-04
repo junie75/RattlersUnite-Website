@@ -3,19 +3,29 @@
 {% block content %}
     <p class="title">Events with Category '{{ category }}'</p>
     <div class="listmenu">
-        {% for post in events %}
-            {% if post['Category'] == category %}
-                <a href="{{ url_for('eventdetails', id=post['ID']) }}">
-                    <div class="contentBox">
-                        <img class="boxPic" src="https://picsum.photos/200/200"/>
-                        <div class="boxDetails">
-                            <p class="boxName">{{ post['Name'] }}</p>
-                            <p class="orgName">{{ post['Organization'] }}</p>
-                            <p class="eventTime">{{ post['Date']|format_datetime }}</p>
+        {% if not noEvents %}
+            {% for post in events %}
+                {% if post['Category'] == category %}
+                    <a href="{{ url_for('eventdetails', id=post['ID']) }}">
+                        <div class="contentBox">
+                            <img class="boxPic" src="https://picsum.photos/200/200"/>
+                            <div class="boxDetails">
+                                <p class="boxName">{{ post['Name'] }}</p>
+                                <p class="orgName">{{ post['Organization'] }}</p>
+                                <p class="eventTime">{{ post['Date']|format_datetime }}</p>
+                            </div>
                         </div>
-                    </div>
-                </a>
-            {% endif %}
-        {% endfor %}
+                    </a>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <div class="noEvent">
+                <div class="textCenter">
+                    <p class="noEventText">
+                        No events were found with the selected category.
+                    </p>
+                </div>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
