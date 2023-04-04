@@ -41,11 +41,11 @@ def fetch_events(cat=False):
     # Grab all info but Category if we are not category searching.
     if not cat:
         events = conn.execute(
-            f"SELECT Events.ID, Events.Name, Organizations.Name AS Organization, Date FROM Events JOIN Organizations ON Organizations.ID = Events.Organization ORDER BY Date"
+            f"SELECT Events.ID, Events.Name, Organizations.Name AS Organization, Date, Location FROM Events JOIN Organizations ON Organizations.ID = Events.Organization ORDER BY Date"
         )
     else:
         events = conn.execute(
-            f"SELECT Events.ID, Events.Name, Organizations.Name AS Organization, Date, Category FROM Events JOIN Organizations ON Organizations.ID = Events.Organization ORDER BY Date"
+            f"SELECT Events.ID, Events.Name, Organizations.Name AS Organization, Date, Location, Category FROM Events JOIN Organizations ON Organizations.ID = Events.Organization ORDER BY Date"
         )
 
     temp = events.fetchall()
@@ -116,7 +116,7 @@ def list_org_events(org_id):
     """
     conn = connect_db()
     events = conn.execute(
-        f"SELECT Events.ID, Events.Name, Date FROM Events WHERE Events.Organization = {org_id} ORDER BY Date"
+        f"SELECT Events.ID, Events.Name, Date, Location FROM Events WHERE Events.Organization = {org_id} ORDER BY Date"
     )
     temp = events.fetchall()
 
