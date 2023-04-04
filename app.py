@@ -12,13 +12,18 @@ def connect_db():
     return conn
 
 # This function fets all events from A-Z that are after the current time.
-def fetch_events():
+def fetch_events(cat=False):
     conn = connect_db()
     # Grabs current date
     current_date = datetime.now().isoformat()
-    events = conn.execute(
-        f"SELECT Events.ID, Events.Name, Organizations.Name AS Organization, Date FROM Events JOIN Organizations ON Organizations.ID = Events.Organization ORDER BY Date"
-    )
+    if not cat:
+        events = conn.execute(
+            f"SELECT Events.ID, Events.Name, Organizations.Name AS Organization, Date FROM Events JOIN Organizations ON Organizations.ID = Events.Organization ORDER BY Date"
+        )
+    else:
+        events = conn.execute(
+            f"SELECT Events.ID, Events.Name, Organizations.Name AS Organization, Date, Category FROM Events JOIN Organizations ON Organizations.ID = Events.Organization ORDER BY Date"
+        )
     # Store event data in temp
     temp = events.fetchall()
     # For now loop and remove events that are before the date
@@ -80,8 +85,7 @@ def main():
 @app.route("/events")
 def events():
     events = fetch_events()
-    return render_template("events.html", events=events, categories=None)
-
+    return render_template("events.html", events=events)
 
 @app.route("/organizations")
 def organizations():
@@ -93,6 +97,11 @@ def organizations():
 def leaderboards():
     board = fetch_leaderboards()
     return render_template("leaderboards.html", board=board)
+
+@app.route("/search/<category>")
+def search(category):
+    events = fetch_events(True)
+    return render_template("search.html", events=events, category=category)
 
 @app.route("/eventdetails/<id>")
 def eventdetails(id):
