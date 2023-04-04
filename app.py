@@ -242,7 +242,7 @@ def signupMethod():
         student_id = request.form["student_id"]
         name = request.form["name"]
         insert_student_data(student_id, name)
-        return "Data inserted successfully"
+        return redirect(url_for("main"))
     else:
         return render_template("SignUp.html")
 
