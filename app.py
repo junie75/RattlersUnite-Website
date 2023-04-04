@@ -17,14 +17,13 @@ def fetch_events():
     # Grabs current date
     current_date = datetime.now().isoformat()
     events = conn.execute(
-        f"SELECT Events.Name, Organizations.Name AS Organization, Date FROM Events JOIN Organizations ON Organizations.ID = Events.Organization ORDER BY Date"
+        f"SELECT Events.ID, Events.Name, Organizations.Name AS Organization, Date FROM Events JOIN Organizations ON Organizations.ID = Events.Organization ORDER BY Date"
     )
     # Store event data in temp
     temp = events.fetchall()
     # For now loop and remove events that are before the date
     # TODO: Maybe remove dates from SQL DB too.
-    for e in temp:
-        print(e.keys())
+    for e in temp[:]:
         if e["Date"] < current_date:
             temp.remove(e)
     return temp
@@ -32,7 +31,7 @@ def fetch_events():
 
 def fetch_organizations():
     conn = connect_db()
-    orgs = conn.execute("SELECT Name FROM Organizations")
+    orgs = conn.execute("SELECT Name, ID FROM Organizations")
     return orgs.fetchall()
 
 
@@ -41,6 +40,21 @@ def fetch_leaderboards():
     board = conn.execute("SELECT Name, Points FROM Students")
     return board.fetchall()
 
+def find_event(id):
+    conn = connect_db()
+    event = conn.execute(
+        f"SELECT Events.Name, Organizations.Name AS Organization, Date, Description FROM Events JOIN Organizations ON Organizations.ID = Events.Organization WHERE Events.ID = {id}"
+    )
+    temp = event.fetchall()
+    return temp[0]
+
+def find_organization(id):
+    conn = connect_db()
+    org = conn.execute(
+        f"SELECT Name, AboutUs FROM Organizations WHERE Organizations.ID = {id}"
+    )
+    temp = org.fetchall()
+    return temp[0]
 
 ## Filter Functions
 @app.template_filter()
@@ -74,6 +88,16 @@ def leaderboards():
     board = fetch_leaderboards()
     return render_template("leaderboards.html", board=board)
 
+@app.route("/eventdetails/<id>")
+def eventdetails(id):
+    event = find_event(id)
+    return render_template("eventPage.html", event=event)
+
+@app.route("/orgdetails/<id>")
+def organizationdetails(id):
+    print(id)
+    org = find_organization(id)
+    return render_template("organizationPage.html", org=org)
 
 @app.route("/login")
 def login():
