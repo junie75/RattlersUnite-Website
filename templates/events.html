@@ -6,11 +6,11 @@
         {% for post in events %}
             <a href="{{ url_for('eventdetails', id=post['ID']) }}">
                 <div class="contentBox">
-                    <img class="boxPic" src="https://picsum.photos/200/200"/>
+                    <img src={{ post['EventIcon'] }} class="boxPic"/>
                     <div class="boxDetails">
                         <p class="boxName">{{ post['Name']|text_limiter }}</p>
                         <p class="orgName">{{ post['Organization']|text_limiter(org=True) }}</p>
-                        <p class="eventTime">{{ post['Date']|format_datetime }}</p>
+                        <p class="eventTime">{{ post['StartDate']|format_datetime(post['EndDate']) }}</p>
                         <p class="eventTime">Location: {{ post['Location'] }}</p>
                     </div>
                 </div>
