@@ -367,6 +367,7 @@ footer p{
     display: block;
     margin-left: auto;
     margin-right: auto;
-    height: 250px;
+    max-width: 640px;
+    max-height: 250px;
     padding-top: 15px;
 }
