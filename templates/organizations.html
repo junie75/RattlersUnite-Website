@@ -2,7 +2,7 @@
 
 {% block content %}
     <p class="title">Organizations</p>
-    <div class="listmenu">
+    <div class="gridmenu">
         {% for o in organizations %}
             <a href="{{ url_for('organizationdetails', id=o['ID']) }}">
                 <div class="contentBox">
