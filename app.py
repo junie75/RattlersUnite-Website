@@ -1,5 +1,6 @@
 from flask import Flask, redirect, render_template, request, url_for
 from datetime import datetime
+from random import randint
 import sqlite3
 
 app = Flask(__name__)
@@ -15,26 +16,46 @@ def connect_db():
     return conn
 
 
-def sql_time_check(s: list):
+def sql_time_check(e: str):
+    """
+    This function returns whether the provided ISO datetime is
+    before the current datetime.
+    """
+    current_date = datetime.now().isoformat()
+    return e < current_date
+
+
+def sql_list_time_check(s: list):
     """
     This function removes any event from the provided DB list
     that is before the current date.
     """
-    current_date = datetime.now().isoformat()
-
     for e in s[:]:
-        if e["Date"] < current_date:
+        if sql_time_check(e["Date"]):
             s.remove(e)
     return s
 
 
-def fetch_events(cat=False):
+@app.template_filter()
+def text_limiter(text: str, org=False):
+    if not org:
+        if len(text) > 32:
+            return text[:32] + "..."
+        return text
+    else:
+        if len(text) > 34:
+            return text[:34] + "..."
+        return text
+
+
+def fetch_events(cat: bool = False, amnt: int = None):
     """
     This function fetches every event and its' information in the
     Events table.
 
     :param cat: Grabs category from DB for use in category searching
         if set to True.
+    :param amnt: The amount of events we should fetch at random.
     """
     conn = connect_db()
 
@@ -50,18 +71,61 @@ def fetch_events(cat=False):
 
     temp = events.fetchall()
 
+    if amnt:
+        rand_temp = []
+        count = 0
+
+        while count < amnt:
+            if temp == []:
+                count = 6
+                continue
+
+            e = temp[randint(0, len(temp) - 1)]
+
+            if sql_time_check(e["Date"]):
+                temp.remove(e)
+                continue
+            else:
+                rand_temp.append(e)
+                temp.remove(e)
+                count += 1
+
+        return rand_temp
+
     # We will return only events that are after the current local time.
-    return sql_time_check(temp)
+    return sql_list_time_check(temp)
 
 
-def fetch_organizations():
+def fetch_organizations(amnt: int = None):
     """
     This function fetches the name and ID of every school organization in the
     Organizations table.
+
+    :param amnt: The amount of events we should fetch at random.
     """
     conn = connect_db()
     orgs = conn.execute("SELECT Name, ID FROM Organizations")
-    return orgs.fetchall()
+
+    org = orgs.fetchall()
+
+    if amnt:
+        rand_temp = []
+        count = 0
+
+        while count < amnt:
+            if org == []:
+                count = 6
+                continue
+
+            o = org[randint(0, len(org) - 1)]
+
+            rand_temp.append(o)
+            org.remove(o)
+            count += 1
+
+        return rand_temp
+
+    return org
 
 
 def fetch_leaderboards():
@@ -122,7 +186,7 @@ def list_org_events(org_id):
     temp = events.fetchall()
 
     # We will return only events that are after the current local time.
-    return sql_time_check(temp)
+    return sql_list_time_check(temp)
 
 
 # signup
@@ -169,8 +233,8 @@ def format_datetime(iso: str):
 ## Site Functions
 @app.route("/")
 def main():
-    events = fetch_events()
-    orgs = fetch_organizations()
+    events = fetch_events(amnt=5)
+    orgs = fetch_organizations(amnt=5)
     return render_template("home.html", events=events, organizations=orgs)
 
 
@@ -243,7 +307,7 @@ def signupMethod():
         student_id = request.form["student_id"]
         name = request.form["name"]
         insert_student_data(student_id, name)
-        return "Data inserted successfully"
+        return redirect(url_for("main"))
     else:
         return render_template("SignUp.html")
 

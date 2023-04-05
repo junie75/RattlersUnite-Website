@@ -2,7 +2,7 @@
 
 {% block content %}
     <p class="title">Events with Category '{{ category }}'</p>
-    <div class="listmenu">
+    <div class="gridmenu">
         {% if not noEvents %}
             {% for post in events %}
                 {% if post['Category'] == category %}
