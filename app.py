@@ -31,7 +31,7 @@ def sql_list_time_check(s: list):
     that is before the current date.
     """
     for e in s[:]:
-        if sql_time_check(e["Date"]):
+        if sql_time_check(e["EndDate"]):
             s.remove(e)
     return s
 
@@ -62,11 +62,11 @@ def fetch_events(cat: bool = False, amnt: int = None):
     # Grab all info but Category if we are not category searching.
     if not cat:
         events = conn.execute(
-            f"SELECT Events.ID, Events.Name, Organizations.Name AS Organization, Date, Location FROM Events JOIN Organizations ON Organizations.ID = Events.Organization ORDER BY Date"
+            f"SELECT Events.ID, Events.Name, Organizations.Name AS Organization, StartDate, EndDate, Location, EventIcon FROM Events JOIN Organizations ON Organizations.ID = Events.Organization ORDER BY StartDate"
         )
     else:
         events = conn.execute(
-            f"SELECT Events.ID, Events.Name, Organizations.Name AS Organization, Date, Location, Category FROM Events JOIN Organizations ON Organizations.ID = Events.Organization ORDER BY Date"
+            f"SELECT Events.ID, Events.Name, Organizations.Name AS Organization, StartDate, EndDate, Location, Category, EventIcon FROM Events JOIN Organizations ON Organizations.ID = Events.Organization ORDER BY StartDate"
         )
 
     temp = events.fetchall()
@@ -82,7 +82,7 @@ def fetch_events(cat: bool = False, amnt: int = None):
 
             e = temp[randint(0, len(temp) - 1)]
 
-            if sql_time_check(e["Date"]):
+            if sql_time_check(e["EndDate"]):
                 temp.remove(e)
                 continue
             else:
@@ -104,7 +104,7 @@ def fetch_organizations(amnt: int = None):
     :param amnt: The amount of events we should fetch at random.
     """
     conn = connect_db()
-    orgs = conn.execute("SELECT Name, ID FROM Organizations")
+    orgs = conn.execute("SELECT Name, OrgIcon, ID FROM Organizations")
 
     org = orgs.fetchall()
 
@@ -146,9 +146,10 @@ def find_event(id: int):
     """
     conn = connect_db()
     event = conn.execute(
-        f"SELECT Events.Name, Organizations.Name AS Organization, Date, Location, Description FROM Events JOIN Organizations ON Organizations.ID = Events.Organization WHERE Events.ID = {id}"
+        f"SELECT Events.Name, Organizations.Name AS Organization, StartDate, EndDate, Location, EventBanner, Description FROM Events JOIN Organizations ON Organizations.ID = Events.Organization WHERE Events.ID = {id}"
     )
     temp = event.fetchall()
+    print(temp[0].keys())
 
     # Since we are only looking for 1 event by default, we should just
     # return the first and only element
@@ -163,7 +164,7 @@ def find_organization(id):
     """
     conn = connect_db()
     org = conn.execute(
-        f"SELECT Name, AboutUs FROM Organizations WHERE Organizations.ID = {id}"
+        f"SELECT Name, OrgIcon, AboutUs FROM Organizations WHERE Organizations.ID = {id}"
     )
     temp = org.fetchall()
 
@@ -180,7 +181,7 @@ def list_org_events(org_id):
     """
     conn = connect_db()
     events = conn.execute(
-        f"SELECT Events.ID, Events.Name, Date, Location FROM Events WHERE Events.Organization = {org_id} ORDER BY Date"
+        f"SELECT Events.ID, Events.Name, StartDate, EndDate, Location, EventIcon FROM Events WHERE Events.Organization = {org_id} ORDER BY StartDate"
     )
     temp = events.fetchall()
 
@@ -218,15 +219,23 @@ def insert_user(student_id, name):
 
 ## Filter Functions
 @app.template_filter()
-def format_datetime(iso: str):
+def format_datetime(startiso: str, endiso: str):
     """
     This function takes a string that is in ISO format and converts it
     to a string in datetime format.
 
     :param iso: The ISO format string we are converting to datetime.
     """
-    dt = datetime.fromisoformat(iso)
-    return datetime.strftime(dt, "%B %d, %Y | %I:%M%p CT")
+    startDt = datetime.fromisoformat(startiso)
+    endDt = datetime.fromisoformat(endiso)
+
+    if endDt.day == startDt.day:
+        startStr = datetime.strftime(startDt, "%b %d | %I:%M%p")
+        endStr = datetime.strftime(endDt, " - %I:%M%p CT")
+    else:
+        startStr = datetime.strftime(startDt, "%b %d - %I:%M%p")
+        endStr = datetime.strftime(endDt, " to %b %d - %I:%M%p CT")
+    return startStr + endStr
 
 
 ## Site Functions
