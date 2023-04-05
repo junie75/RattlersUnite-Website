@@ -14,7 +14,7 @@
     </div>
 
     <p class="title">Events made by this Organization</p>
-    <div class="listmenu">
+    <div class="gridmenu">
         {% if events %}
             {% for post in events %}
             <a href="{{ url_for('eventdetails', id=post['ID']) }}">
