@@ -22,7 +22,7 @@ def sql_time_check(e: str):
     before the current datetime.
     """
     current_date = datetime.now().isoformat()
-    return e < current_date 
+    return e < current_date
 
 
 def sql_list_time_check(s: list):
@@ -31,7 +31,7 @@ def sql_list_time_check(s: list):
     that is before the current date.
     """
     for e in s[:]:
-        if sql_time_check(e['Date']):
+        if sql_time_check(e["Date"]):
             s.remove(e)
     return s
 
@@ -55,7 +55,7 @@ def fetch_events(cat: bool = False, amnt: int = None):
 
     :param cat: Grabs category from DB for use in category searching
         if set to True.
-    :param amnt: 
+    :param amnt: The amount of events we should fetch at random.
     """
     conn = connect_db()
 
@@ -70,19 +70,19 @@ def fetch_events(cat: bool = False, amnt: int = None):
         )
 
     temp = events.fetchall()
-    
+
     if amnt:
         rand_temp = []
         count = 0
-        
+
         while count < amnt:
             if temp == []:
                 count = 6
                 continue
 
-            e = temp[randint(0, len(temp)-1)]
+            e = temp[randint(0, len(temp) - 1)]
 
-            if sql_time_check(e['Date']):
+            if sql_time_check(e["Date"]):
                 temp.remove(e)
                 continue
             else:
@@ -100,29 +100,31 @@ def fetch_organizations(amnt: int = None):
     """
     This function fetches the name and ID of every school organization in the
     Organizations table.
+
+    :param amnt: The amount of events we should fetch at random.
     """
     conn = connect_db()
     orgs = conn.execute("SELECT Name, ID FROM Organizations")
-    
+
     org = orgs.fetchall()
 
     if amnt:
         rand_temp = []
         count = 0
-        
+
         while count < amnt:
             if org == []:
                 count = 6
                 continue
 
-            o = org[randint(0, len(org)-1)]
-            
+            o = org[randint(0, len(org) - 1)]
+
             rand_temp.append(o)
             org.remove(o)
             count += 1
 
         return rand_temp
-    
+
     return org
 
 
