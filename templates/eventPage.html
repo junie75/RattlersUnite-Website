@@ -4,8 +4,9 @@
     <div class="listmenu">
         <div class="eventCard">
             <div class="eventDiv">
+                <img src={{ event['EventBanner'] }} class="eventImg"/>
                 <p class="eventTitleText">{{ event['Name'] }}</p>
-                <p class="eventInfoText">Date and Time of Event: {{ event['Date']|format_datetime }}</p>
+                <p class="eventInfoText">Event Dates: {{ event['StartDate']|format_datetime(event['EndDate']) }}</p>
                 <p class="eventInfoText">Location: {{ event['Location'] }}</p>
                 
                 <p class="eventDescTitleText" style="text-align: left;">Event Description</p>

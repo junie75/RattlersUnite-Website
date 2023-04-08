@@ -2,16 +2,16 @@
 
 {% block content %}
     <p class="title">Events</p>
-    <div class="listmenu">
+    <div class="gridmenu">
         {% if events %}
             {% for post in events %}
             <a href="{{ url_for('eventdetails', id=post['ID']) }}">
                 <div class="contentBox">
-                    <img class="boxPic" src="https://picsum.photos/200/200" />
+                    <img class="boxPic" src={{ post['EventIcon'] }}/>
                     <div class="boxDetails">
-                        <p class="boxName">{{ post['Name'] }}</p>
-                        <p class="orgName">{{ post['Organization'] }}</p>
-                        <p class="eventTime">{{ post['Date']|format_datetime }}</p>
+                        <p class="boxName">{{ post['Name']|text_limiter }}</p>
+                        <p class="orgName">{{ post['Organization']|text_limiter(org=True) }}</p>
+                        <p class="eventTime">{{ post['StartDate']|format_datetime(post['EndDate']) }}</p>
                         <p class="eventTime">Location: {{ post['Location'] }}</p>
                     </div>
                 </div>
@@ -29,17 +29,17 @@
     </div>
                     
     <p class="title">Organizations</p>
-    <div class="listmenu">
+    <div class="gridmenu">
         {% if organizations %}
             {% for o in organizations %}
-            <a href="{{ url_for('organizationdetails', id=o['ID']) }}">
-                <div class="contentBox">
-                    <img class="boxPic" src="https://picsum.photos/200/200" />
-                    <div class="boxDetails">
-                        <p class="boxName">{{ o['Name'] }}</p>
+                <a href="{{ url_for('organizationdetails', id=o['ID']) }}">
+                    <div class="contentBox">
+                        <img src={{ o['OrgIcon'] }} class="boxPic"/>
+                        <div class="boxDetails">
+                            <p class="boxName">{{ o['Name']|text_limiter }}</p>
+                        </div>
                     </div>
-                </div>
-            </a>
+                </a>
             {% endfor %}
         {% else %}
             <div class="noEvent">

@@ -1,5 +1,6 @@
 from flask import Flask, redirect, render_template, request, url_for
 from datetime import datetime
+from random import randint
 import sqlite3
 
 app = Flask(__name__)
@@ -15,53 +16,116 @@ def connect_db():
     return conn
 
 
-def sql_time_check(s: list):
+def sql_time_check(e: str):
+    """
+    This function returns whether the provided ISO datetime is
+    before the current datetime.
+    """
+    current_date = datetime.now().isoformat()
+    return e < current_date
+
+
+def sql_list_time_check(s: list):
     """
     This function removes any event from the provided DB list
     that is before the current date.
     """
-    current_date = datetime.now().isoformat()
-
     for e in s[:]:
-        if e["Date"] < current_date:
+        if sql_time_check(e["EndDate"]):
             s.remove(e)
     return s
 
 
-def fetch_events(cat=False):
+@app.template_filter()
+def text_limiter(text: str, org=False):
+    if not org:
+        if len(text) > 32:
+            return text[:32] + "..."
+        return text
+    else:
+        if len(text) > 34:
+            return text[:34] + "..."
+        return text
+
+
+def fetch_events(cat: bool = False, amnt: int = None):
     """
     This function fetches every event and its' information in the
     Events table.
 
     :param cat: Grabs category from DB for use in category searching
         if set to True.
+    :param amnt: The amount of events we should fetch at random.
     """
     conn = connect_db()
 
     # Grab all info but Category if we are not category searching.
     if not cat:
         events = conn.execute(
-            f"SELECT Events.ID, Events.Name, Organizations.Name AS Organization, Date, Location FROM Events JOIN Organizations ON Organizations.ID = Events.Organization ORDER BY Date"
+            f"SELECT Events.ID, Events.Name, Organizations.Name AS Organization, StartDate, EndDate, Location, EventIcon FROM Events JOIN Organizations ON Organizations.ID = Events.Organization ORDER BY StartDate"
         )
     else:
         events = conn.execute(
-            f"SELECT Events.ID, Events.Name, Organizations.Name AS Organization, Date, Location, Category FROM Events JOIN Organizations ON Organizations.ID = Events.Organization ORDER BY Date"
+            f"SELECT Events.ID, Events.Name, Organizations.Name AS Organization, StartDate, EndDate, Location, Category, EventIcon FROM Events JOIN Organizations ON Organizations.ID = Events.Organization ORDER BY StartDate"
         )
 
     temp = events.fetchall()
 
+    if amnt:
+        rand_temp = []
+        count = 0
+
+        while count < amnt:
+            if temp == []:
+                count = 6
+                continue
+
+            e = temp[randint(0, len(temp) - 1)]
+
+            if sql_time_check(e["EndDate"]):
+                temp.remove(e)
+                continue
+            else:
+                rand_temp.append(e)
+                temp.remove(e)
+                count += 1
+
+        return rand_temp
+
     # We will return only events that are after the current local time.
-    return sql_time_check(temp)
+    return sql_list_time_check(temp)
 
 
-def fetch_organizations():
+def fetch_organizations(amnt: int = None):
     """
     This function fetches the name and ID of every school organization in the
     Organizations table.
+
+    :param amnt: The amount of events we should fetch at random.
     """
     conn = connect_db()
-    orgs = conn.execute("SELECT Name, ID FROM Organizations")
-    return orgs.fetchall()
+    orgs = conn.execute("SELECT Name, OrgIcon, ID FROM Organizations")
+
+    org = orgs.fetchall()
+
+    if amnt:
+        rand_temp = []
+        count = 0
+
+        while count < amnt:
+            if org == []:
+                count = 6
+                continue
+
+            o = org[randint(0, len(org) - 1)]
+
+            rand_temp.append(o)
+            org.remove(o)
+            count += 1
+
+        return rand_temp
+
+    return org
 
 
 def fetch_leaderboards():
@@ -82,9 +146,10 @@ def find_event(id: int):
     """
     conn = connect_db()
     event = conn.execute(
-        f"SELECT Events.Name, Organizations.Name AS Organization, Date, Location, Description FROM Events JOIN Organizations ON Organizations.ID = Events.Organization WHERE Events.ID = {id}"
+        f"SELECT Events.Name, Organizations.Name AS Organization, StartDate, EndDate, Location, EventBanner, Description FROM Events JOIN Organizations ON Organizations.ID = Events.Organization WHERE Events.ID = {id}"
     )
     temp = event.fetchall()
+    print(temp[0].keys())
 
     # Since we are only looking for 1 event by default, we should just
     # return the first and only element
@@ -99,7 +164,7 @@ def find_organization(id):
     """
     conn = connect_db()
     org = conn.execute(
-        f"SELECT Name, AboutUs FROM Organizations WHERE Organizations.ID = {id}"
+        f"SELECT Name, OrgIcon, AboutUs FROM Organizations WHERE Organizations.ID = {id}"
     )
     temp = org.fetchall()
 
@@ -116,12 +181,12 @@ def list_org_events(org_id):
     """
     conn = connect_db()
     events = conn.execute(
-        f"SELECT Events.ID, Events.Name, Date, Location FROM Events WHERE Events.Organization = {org_id} ORDER BY Date"
+        f"SELECT Events.ID, Events.Name, StartDate, EndDate, Location, EventIcon FROM Events WHERE Events.Organization = {org_id} ORDER BY StartDate"
     )
     temp = events.fetchall()
 
     # We will return only events that are after the current local time.
-    return sql_time_check(temp)
+    return sql_list_time_check(temp)
 
 
 # signup
@@ -154,22 +219,30 @@ def insert_user(student_id, name):
 
 ## Filter Functions
 @app.template_filter()
-def format_datetime(iso: str):
+def format_datetime(startiso: str, endiso: str):
     """
     This function takes a string that is in ISO format and converts it
     to a string in datetime format.
 
     :param iso: The ISO format string we are converting to datetime.
     """
-    dt = datetime.fromisoformat(iso)
-    return datetime.strftime(dt, "%B %d, %Y | %I:%M%p CT")
+    startDt = datetime.fromisoformat(startiso)
+    endDt = datetime.fromisoformat(endiso)
+
+    if endDt.day == startDt.day:
+        startStr = datetime.strftime(startDt, "%b %d | %I:%M%p")
+        endStr = datetime.strftime(endDt, " - %I:%M%p CT")
+    else:
+        startStr = datetime.strftime(startDt, "%b %d - %I:%M%p")
+        endStr = datetime.strftime(endDt, " to %b %d - %I:%M%p CT")
+    return startStr + endStr
 
 
 ## Site Functions
 @app.route("/")
 def main():
-    events = fetch_events()
-    orgs = fetch_organizations()
+    events = fetch_events(amnt=5)
+    orgs = fetch_organizations(amnt=5)
     return render_template("home.html", events=events, organizations=orgs)
 
 
@@ -242,7 +315,7 @@ def signupMethod():
         student_id = request.form["student_id"]
         name = request.form["name"]
         insert_student_data(student_id, name)
-        return "Data inserted successfully"
+        return redirect(url_for("main"))
     else:
         return render_template("SignUp.html")
 

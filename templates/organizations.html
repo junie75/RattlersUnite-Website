@@ -2,13 +2,13 @@
 
 {% block content %}
     <p class="title">Organizations</p>
-    <div class="listmenu">
+    <div class="gridmenu">
         {% for o in organizations %}
             <a href="{{ url_for('organizationdetails', id=o['ID']) }}">
                 <div class="contentBox">
-                    <img class="boxPic" src="https://picsum.photos/200/200"/>
+                    <img src={{ o['OrgIcon'] }} class="boxPic"/>
                     <div class="boxDetails">
-                        <p class="boxName">{{ o['Name'] }}</p>
+                        <p class="boxName">{{ o['Name']|text_limiter }}</p>
                     </div>
                 </div>
             </a>
