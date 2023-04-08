@@ -258,6 +258,16 @@ div.listmenu a {
     position: relative;
 }
 
+/*leaderboard rank/counter*/
+.leaderboard td:first-child:before{
+    counter-increment: step; /*Increment counter by 1*/
+    content: counter(step, decimal);
+    color: blue;
+    font-size: 18px;
+    position: absolute;
+    left: -25px;
+}
+
 /*cell borders*/
 .leaderboard td{
     border-top: 1px solid gray;
@@ -276,15 +286,7 @@ div.listmenu a {
     width: 20%;
 }
 
-/*leaderboard rank/counter*/
-.leaderboard td:first-child:before{
-    counter-increment: step;
-    content: counter(step, decimal);
-    color: blue;;
-    font-size: 18px;
-    position: absolute;
-    left: -25px;
-}
+
 
 /* Footer */
 footer{
