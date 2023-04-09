@@ -8,6 +8,15 @@
     <title>Rattlers Unite!</title>
 </head>
 <body>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flashes">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
     <div class="topnav" stylesheet="">
         <a class="active" href="{{ url_for('main') }}">Home</a>
         <a href="{{ url_for('events') }}">Events</a>
@@ -26,6 +35,8 @@
         </div>
         <img src="../static/defaults/profilePic.png">
     </div>
+
+    
 
     {% block content %} 
     {% endblock %}

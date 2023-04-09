@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, redirect, render_template, request, url_for, flash
 from datetime import datetime
 from random import randint
 import sqlite3
@@ -329,6 +329,7 @@ def loginMethod():
         user = fetch_user(student_id)
         if user and user["Name"] == name:
             # authentication succeeded, redirect to main page
+            flash('You were successfully logged in')
             return redirect(url_for("main"))
         else:
             # authentication failed, show error message
