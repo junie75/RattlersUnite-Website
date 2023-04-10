@@ -1,9 +1,10 @@
-from flask import Flask, redirect, render_template, request, url_for, flash
+from flask import Flask, redirect, render_template, request, url_for, flash, session
 from datetime import datetime
 from random import randint
 import sqlite3
 
 app = Flask(__name__)
+app.secret_key = 'many random bytes'
 
 
 ## DB Functions
@@ -243,7 +244,9 @@ def format_datetime(startiso: str, endiso: str):
 def main():
     events = fetch_events(amnt=5)
     orgs = fetch_organizations(amnt=5)
-    return render_template("home.html", events=events, organizations=orgs)
+    #added username if it is in session, unknown if it is not
+    return render_template("home.html", events=events, organizations=orgs, 
+                           name = session.get("username", "Unknown"))
 
 
 @app.route("/events")
@@ -315,6 +318,7 @@ def signupMethod():
         student_id = request.form["student_id"]
         name = request.form["name"]
         insert_student_data(student_id, name)
+        flash('Account created')
         return redirect(url_for("main"))
     else:
         return render_template("SignUp.html")
@@ -328,7 +332,10 @@ def loginMethod():
         name = request.form["Name"]
         user = fetch_user(student_id)
         if user and user["Name"] == name:
-            # authentication succeeded, redirect to main page
+            #stores account info
+            session["username"] = user["Name"]
+            session["id"] = student_id
+            # authentication succeeded, redirect to main page with confirmation
             flash('You were successfully logged in')
             return redirect(url_for("main"))
         else:
@@ -337,6 +344,12 @@ def loginMethod():
     else:
         # display login form
         return render_template("login.html")
+    
+@app.route("/logout")
+def logout():
+    session.clear()
+    flash('Logged out')
+    return redirect(url_for("main"))
 
 
 if __name__ == "__main__":

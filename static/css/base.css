@@ -110,6 +110,7 @@ div.listmenu a {
 div.gridmenu {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
+    overflow-x: scroll;
 }
 
 div.gridmenu a {
@@ -127,7 +128,6 @@ div.gridmenu a {
     max-width: 260px;
     margin: 15px;
     position: relative;
-
     overflow: hidden;
     box-shadow: 1px 1px 2px #000;
     
@@ -200,7 +200,6 @@ div.gridmenu a {
 }
 
 #categories li{
-    text-decoration: none;
     list-style: none;
     margin: 10px 10px;
     padding: 20px;
@@ -209,14 +208,15 @@ div.gridmenu a {
     background-color:rgba(255, 255, 255, 0.15);
     color: white;
     border-radius: 20px;
-    /*border: 2px solid black;
-    font-size: 25px;
-    box-shadow: 3px 3px 0 #000;
-    background-color: #fff;
-    */
+}
+
+#categories a{
+    text-decoration: none;
+    color: white;
 }
 
 #categories li:hover{
+    background-color:rgba(255, 255, 255, 0.05);
     transform: translateY(-0.25em);
 
 }
@@ -225,7 +225,12 @@ div.gridmenu a {
     background-color: rgb(255, 196, 0);
     color: white;
     transform: scale(1,1);
+}
 
+#categories a:visited{
+    background-color:rgba(255, 255, 255, 0.15);
+    color: white;
+    text-decoration: none;
 }
 
 /*Leaderboard*/
@@ -372,4 +377,13 @@ footer p{
     max-width: 640px;
     max-height: 250px;
     padding-top: 15px;
+}
+
+/*edits the way flash messages look*/
+.flashes{
+    background-color: #cecece;
+    color: black;
+    font-size: 15;
+    list-style-type: none;
+    text-decoration: none;
 }

@@ -21,10 +21,22 @@
         <a class="active" href="{{ url_for('main') }}">Home</a>
         <a href="{{ url_for('events') }}">Events</a>
         <a href="{{ url_for('organizations') }}">Organizations</a>
-        <a href="{{ url_for('leaderboards') }}">Leaderboard</a> <!--#leaderboard-->
+        <a href="{{ url_for('leaderboards') }}">Leaderboard</a> 
+
+        <!--if user is not logged in display default login button-->
+        {% if name == 'Unknown' %}
         <div class="login">
             <a href="{{ url_for('login') }}">Login</a>
         </div>
+        <!--else display username and logout button-->
+        {% else %}
+        <div class="login">
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+        <div class="login">
+            <a class="active">Welcome {{ session['username'] }}</a>
+        </div>
+        {% endif %}
     </div>
     <div class="container">
         <img class="banner" src="../static/defaults/friendsHug.png"/>
