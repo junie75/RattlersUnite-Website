@@ -191,17 +191,28 @@ def list_org_events(org_id):
 
 
 # signup
-def insert_student_data(student_id, name):
+def insert_student_data(student_id: str, name: str):
+    """
+    This function adds new student data into the Students database.
+
+    :param student_id: The ID of the new user.
+    :param name: The name of the student
+    """
     conn = connect_db()
     conn.execute(
-        "INSERT INTO Students (StudentID, Name) VALUES (?, ?)", (student_id, name)
+        f"INSERT INTO Students (StudentID, Name) VALUES ({student_id}, {name})"
     )
     conn.commit()
-    conn.close()
 
 
 # sign in
-def fetch_user(student_id):
+def fetch_user(student_id: str):
+    """
+    This function fetches all of the information of one student based off their
+    ID number.
+
+    :param student_id: THe ID of the user to fetch data from.
+    """
     conn = connect_db()
     user = conn.execute(
         f"SELECT * FROM Students WHERE StudentID = '{student_id}'"
@@ -209,14 +220,20 @@ def fetch_user(student_id):
     return user
 
 
-def insert_user(student_id, name):
-    conn = connect_db()
-    conn.execute(
-        "INSERT INTO Users (StudentID, Name) VALUES (?, ?)", (student_id, name)
-    )
-    conn.commit()
-    conn.close()
+def getPoints(id: str):
+    """
+    This function gets the total points a student who is logged in has acumulated.
 
+    :param id: The logged in students' ID number.
+    """
+    conn = connect_db()
+    user = conn.execute(
+        f"SELECT Points from Students WHERE StudentID = '{id}'"
+    )
+    temp = user.fetchall()
+    return temp[0]['Points']
+
+app.jinja_env.globals.update(getPoints=getPoints)
 
 ## Filter Functions
 @app.template_filter()
@@ -244,9 +261,10 @@ def format_datetime(startiso: str, endiso: str):
 def main():
     events = fetch_events(amnt=5)
     orgs = fetch_organizations(amnt=5)
+    a = session.get("username", None)
     #added username if it is in session, unknown if it is not
     return render_template("home.html", events=events, organizations=orgs, 
-                           name = session.get("username", "Unknown"))
+                           name=a)
 
 
 @app.route("/events")
