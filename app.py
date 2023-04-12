@@ -318,8 +318,8 @@ def signupMethod():
         student_id = request.form["student_id"]
         name = request.form["name"]
         insert_student_data(student_id, name)
-        flash('Account created')
-        return redirect(url_for("main"))
+        flash("Your account has been created. Please sign in.")
+        return redirect(url_for("login"))
     else:
         return render_template("SignUp.html")
 
@@ -336,7 +336,6 @@ def loginMethod():
             session["username"] = user["Name"]
             session["id"] = student_id
             # authentication succeeded, redirect to main page with confirmation
-            flash('You were successfully logged in')
             return redirect(url_for("main"))
         else:
             # authentication failed, show error message
@@ -348,7 +347,6 @@ def loginMethod():
 @app.route("/logout")
 def logout():
     session.clear()
-    flash('Logged out')
     return redirect(url_for("main"))
 
 
