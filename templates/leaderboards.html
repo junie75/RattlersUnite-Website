@@ -1,32 +1,44 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-<div class="listmenu">
-   <div class="leaderboardCard">
-        <section class="boardbanner">
-            <p>Leaderboard</p>  
-        </section>    
-        {% if board %}
-            <table class="leaderboard">
-            {% for b in board %}
-                <tr>
-                    <td class="user" colspan="2">{{ b['Name']}}</td>
-                    <td class="points">{{ b['Points']}} pts</td>
-                </tr>
-            {% endfor %}
-            </table>
-        {% else %}
+    <div class="listmenu">
+        <div class="leaderboardTextCard">
+            <section class="boardbanner">
+                <p>How to earn points?</p>  
+            </section>    
             <div class="noEvent">
-                <div class="textCenter">
+                <div class="textCenter" style="max-width: 95%;">
                     <p>
-                        Leaderboard is currently unavailable.
+                        Earning points is easy! When you attend an event, make sure you are signed in on Rattlers Unite and present your device to an organization member. Once the organization member fills out the required information, you should earn the points from the event. Top scorers are shown here so get to point gathering if you want to be on the board!
                     </p>
                 </div>
             </div>
-        {% endif %}
-    </div> 
-</div>
+        </div>  
+    </div>
 
-
+    <div class="listmenu">
+        <div class="leaderboardCard">
+            <section class="boardbanner">
+                <p>Leaderboard</p>  
+            </section>    
+            {% if board %}
+                <table class="leaderboard">
+                {% for b in board %}
+                    <tr>
+                        <td class="user" colspan="2">{{ b['Name']}}</td>
+                        <td class="points">{{ b['Points']}} pts</td>
+                    </tr>
+                {% endfor %}
+                </table>
+            {% else %}
+                <div class="noEvent">
+                    <div class="textCenter">
+                        <p>
+                            Leaderboard is currently unavailable.
+                        </p>
+                    </div>
+                </div>
+            {% endif %}
+        </div> 
+    </div>
 {% endblock %}

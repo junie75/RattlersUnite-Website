@@ -249,6 +249,18 @@ div.gridmenu a {
     overflow-x: hidden;
 }
 
+.leaderboardTextCard{
+    background-color: white;
+    min-width: 1000px;
+    max-width: 900px;
+    padding-bottom: 20px;
+    margin: 30px auto 2px;
+    border-radius: 10px;
+    position:relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 /*header at top of leaderboard*/
 .boardbanner{
     background-color: #2d5dd2;
