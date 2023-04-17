@@ -361,12 +361,28 @@ def loginMethod():
     else:
         # display login form
         return render_template("login.html")
+
+
     
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for("main"))
 
+
+#Points method
+@app.route('/award_points', methods=['POST'])
+def award_points():
+    # Get the user ID from the session
+    student_id = session["id"]
+    
+    # Update the user's points in the database
+    conn = connect_db()
+    conn.execute(f"UPDATE Students SET Points = Points + 10 WHERE StudentID = '{student_id}'")
+    conn.commit()
+    
+    # Redirect the user back to the home page
+    return redirect(url_for('main'))
 
 if __name__ == "__main__":
     app.run()
