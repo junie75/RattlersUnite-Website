@@ -16,14 +16,14 @@
     <p class="title">Events made by this Organization</p>
     <div class="gridmenu">
         {% if events %}
-            {% for e in events %}
-            <a href="{{ url_for('eventdetails', id=e['ID']) }}">
+            {% for post in events %}
+            <a href="{{ url_for('eventdetails', id=post['ID']) }}">
                 <div class="contentBox">
-                    <img src={{ e['EventIcon'] }} class="boxPic"/>
+                    <img src={{ post['EventIcon'] }} class="boxPic"/>
                     <div class="boxDetails">
-                        <p class="boxName">{{ e['Name']|text_limiter }}</p>
-                        <p class="eventTime">{{ e['StartDate']|format_datetime(e['EndDate']) }}</p>
-                        <p class="eventTime">Location: {{ e['Location'] }}</p>
+                        <p class="boxName">{{ post['Name']|text_limiter }}</p>
+                        <p class="eventTime">{{ post['StartDate']|format_datetime(post['EndDate']) }}</p>
+                        <p class="eventTime">Location: {{ post['Location'] }}</p>
                     </div>
                 </div>
             </a>
