@@ -1,24 +1,36 @@
 from flask import Flask, redirect, render_template, request, url_for, flash, session
 from datetime import datetime
-from models import db, Event, Organization, Student
-from forms import LoginForm
+from models import db, Event, Organization, Account, StudentAccount, OrganizationAccount, AdminAccount
+from forms import LoginForm, StudentSignUpForm, OrganizationSignUpForm
 from globals import CATEGORIES
-
-# from create_db import make_db
-from sqlalchemy import func
+from flask_login import LoginManager, login_required, current_user, login_user, logout_user
+from flask_bcrypt import Bcrypt
+from sqlalchemy import func, desc
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///../db/RattlersUnite2.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = "many random bytes"
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+bcrypt = Bcrypt(app)
+
 db.init_app(app)
 
 with app.app_context():
     db.create_all()
     # make_db()
 
-app.jinja_env.globals.update(CATEGORIES=CATEGORIES)
+@login_manager.user_loader
+def load_user(user_id: int):
+    user = Account.query.get(user_id)
+    if user:
+        return user
+    return None
 
+app.jinja_env.globals.update(CATEGORIES=CATEGORIES)
 
 @app.template_filter()
 def text_limiter(text: str, org=False):
@@ -75,7 +87,7 @@ def fetch_leaderboards():
     This function grabs the name and points of every student in the
     Student table.
     """
-    return db.session.query(Student.Name, Student.Points).all()
+    return db.session.query(Account.name, Account.points).filter_by(staff=False).all()
 
 
 def find_event(id: int):
@@ -110,20 +122,6 @@ def list_org_events(org_id):
     # We will return only events that are after the current local time.
     return query.all()
 
-
-# signup
-def insert_student_data(student_id: str, name: str):
-    """
-    This function adds new student data into the Students database.
-
-    :param student_id: The ID of the new user.
-    :param name: The name of the student
-    """
-    new_student = Student(StudentID=student_id, Name=name)
-    db.session.add(new_student)
-    db.session.commit()
-
-
 # sign in
 def fetch_user(student_id: str):
     """
@@ -133,7 +131,16 @@ def fetch_user(student_id: str):
     :param student_id: The ID of the user to fetch data from.
     """
     temp = Student.query.filter_by(StudentID=student_id).first()
-    print(temp)
+    return temp
+
+def fetch_organization(org_id: int):
+    """
+    This function fetches all of the information of one organization based off their
+    ID number.
+
+    :param org_id: The ID of the organization to fetch data from.
+    """
+    temp = Organization.query.filter_by(ID=org_id).first()
     return temp
 
 
@@ -170,11 +177,11 @@ def format_datetime(start: datetime, end: datetime):
 ## Site Functions
 @app.route("/")
 def main():
+    print(current_user)
     events = fetch_events(amnt=5)
     orgs = fetch_organizations(amnt=5)
-    a = session.get("username", None)
     # added username if it is in session, unknown if it is not
-    return render_template("home.html", events=events, organizations=orgs, name=a)
+    return render_template("home.html", events=events, organizations=orgs)
 
 
 @app.route("/events")
@@ -192,6 +199,7 @@ def organizations():
 @app.route("/leaderboards")
 def leaderboards():
     board = fetch_leaderboards()
+    print(board)
     return render_template("leaderboards.html", board=board)
 
 
@@ -226,48 +234,53 @@ def organizationdetails(id):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('main'))
+    
     form = LoginForm()
     if form.validate_on_submit():
-        studentID = form.studentID.data
-        studentName = form.studentName.data
-        user = fetch_user(studentID)
-        if user and user.Name == studentName:
-            # stores account info
-            session["username"] = user.Name
-            session["id"] = studentID
+        user = Account.query.filter_by(username=form.username.data).first()
+        if user and user.check_password(form.password.data):
+            login_user(user)
             return redirect(url_for("main"))
         else:
             return render_template("LogIn.html", error=True, form=form)
     return render_template("LogIn.html", form=form)
 
 
-@app.route("/signup")
+@app.route("/signup", methods=["GET", "POST"])
 def signup():
-    return render_template("SignUp.html")
-
-
-@app.route("/orgLogIn")
-def orgLogIn():
-    return render_template("orgLogIn.html")
-
-
-# Method to allow user to signup
-@app.route("/signupMethod", methods=["GET", "POST"])
-def signupMethod():
-    if request.method == "POST":
-        student_id = request.form["student_id"]
-        name = request.form["name"]
-        insert_student_data(student_id, name)
-        flash("Your account has been created. Please sign in.")
+    form = StudentSignUpForm()
+    if form.validate_on_submit():
+        user = StudentAccount(name=form.name.data, username=form.username.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
         return redirect(url_for("login"))
-    else:
-        return render_template("SignUp.html")
+    return render_template("SignUp.html", form=form)
+
+@app.route('/orgsignup', methods=['GET', 'POST'])
+def orgsignup():
+    form = OrganizationSignUpForm()
+    if form.validate_on_submit():
+        user = OrganizationAccount(name=form.name.data, username=form.username.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        return redirect(url_for("login"))
+    return render_template("OrgSignUp.html", form=form)
 
 @app.route("/logout")
 def logout():
-    session.clear()
+    if current_user.is_authenticated:
+        logout_user()
+        session.clear()
     return redirect(url_for("main"))
 
+@app.route("/portal")
+@login_required
+def portal():
+    return render_template("SignUp.html")
 
 # @app.route("/add")
 # def add_event():

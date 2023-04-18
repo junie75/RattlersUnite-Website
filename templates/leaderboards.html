@@ -23,10 +23,10 @@
             </section>    
             {% if board %}
                 <table class="leaderboard">
-                {% for b in board %}
+                {% for n, p in board %}
                     <tr>
-                        <td class="user" colspan="2">{{ b['Name']}}</td>
-                        <td class="points">{{ b['Points']}} pts</td>
+                        <td class="user" colspan="2">{{ n }}</td>
+                        <td class="points">{{ p }} pts</td>
                     </tr>
                 {% endfor %}
                 </table>

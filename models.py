@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
-from sqlalchemy import ForeignKey
+from flask_login import UserMixin
+from flask_bcrypt import generate_password_hash, check_password_hash
 
 db = SQLAlchemy()
 
@@ -36,13 +37,35 @@ class Event(db.Model):
     def __repr__(self):
         return "<Event %r>" % self.Name
 
+class Account(db.Model, UserMixin):
+    __tablename__ = "Accounts"
 
-class Student(db.Model):
-    __tablename__ = "Students"
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String)
+    username = db.Column(db.String, unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+    points = db.Column(db.Integer, nullable=False, default=0)
+    staff = db.Column(db.Boolean, default=False, nullable=False)
+    admin = db.Column(db.Boolean, default=False, nullable=False)
+    
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
 
-    StudentID = db.Column(db.String, primary_key=True, unique=True)
-    Name = db.Column(db.String, nullable=False)
-    Points = db.Column(db.Integer, default=0)
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
+    
+    @staticmethod
+    def get_by_username(username):
+        return Account.query.filter_by(username=username).first()
 
-    def __repr__(self):
-        return "<Student %r>" % self.StudentID
+class StudentAccount(Account):
+    def __init__(self, **properties):
+        super().__init__(**properties)
+
+class OrganizationAccount(Account):
+    def __init__(self, **properties):
+        super().__init__(**properties, staff=True)
+
+class AdminAccount(Account):
+    def __init__(self, **properties):
+        super().__init__(**properties, staff=True, admin=True)

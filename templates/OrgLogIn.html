@@ -1,40 +1,51 @@
+
 <!DOCTYPE html>
 <html lan="en" and dir="Itr">
 <head>
     <meta charset = "utf-8">
-    <title>Interactive Login Form</title>
-    <link rel = "stylesheet" href = "static/css/LogIn.css">
-    <script src = "Login.js"></script>
+    <title>Rattlers Unite!</title>
+    <link rel ="stylesheet" href = "../static/css/LogIn.css">
 </head>
     
 <body>
-    
-    
-    <form class ="box" action="login.html" method = "POST">
+    <form method = "POST" class="box">
+        {{ form.csrf_token }}
         <div class="loginLogo">
             <img src="../static/defaults/STMUlogo.png" height="100px">
         </div>
-            <h1>Organization Log In</h1>
+        <h1>Organization Login</h1>
+        
+        {% if error %}
+            <div style="display: block;">
+                <p style="color:red">Incorrect or invalid name or ID number.</p>
+            </div>
+        {% endif %}
+
         <div style="display: block;">
-            <input type = "text" name="OrgID" placeholder = "Organization ID" id = "OrgID" required>
+            {{ form.username }}
+            {% for error in form.username.errors %}
+                <span class="text-danger">{{ error }}</span><br>
+            {% endfor %}
         </div>
         
-        
         <div style="display: block;">
-            <input type="text" id="Name" name="Name" placeholder="Name">
+            {{ form.password }}
+            {% for error in form.password.errors %}
+                <span class="text-danger">{{ error }}</span><br>
+            {% endfor %}
         </div>
 
         <div style="display: block;">
-            <button class="submitButton" type="submit">LOGIN</button>
+            {{ form.submit(class="submitButton") }}
         </div>
-
+        
         <div style="margin-top: 30px;">
-            <a class="externalLinks" href="{{ url_for('signup') }}">
-                Sign Up
+            <a class="externalLinks" href="{{ url_for('orgsignup') }}">
+                First Time Organization
             </a>
             <span style="padding-left: 5px;">|</span>
             <a class="externalLinks" href="{{ url_for('login') }}">
-                Student Log In
+                Student SSO
             </a>
         </div>
         <div style="margin-top: 5px;">

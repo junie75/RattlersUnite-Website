@@ -15,23 +15,38 @@
         <a href="{{ url_for('leaderboards') }}">Leaderboard</a> 
 
         <!--if user is not logged in display default login button-->
-        {% if session %}
+        {% if current_user.is_authenticated %}
             <div class="login">
                 <a href="{{ url_for('logout') }}">Logout</a>
             </div>
-
-            <div class="login">
-                <a class="active">
-                    Welcome {{ session['username'] }}
-                </a>
-                <a>Points: {{ getPoints(session['id']) }}</a>
-            </div>
+                
+            {% if current_user.staff %}
+                <div class="login">
+                    <a href="{{ url_for('portal') }}">Org Portal</a>
+                </div>
+            {% endif %}
+            
         <!--else display username and logout button-->
         {% else %}
             <div class="login">
                 <a href="{{ url_for('login') }}">Login</a>
             </div>
         {% endif %}
+
+        <div class="login">
+            {% if current_user.is_authenticated %}
+                <a class="active">
+                    Welcome {{ current_user.name }}!
+                </a>
+                {% if not current_user.staff %}
+                    <a>Points: {{ current_user.points }}</a>
+                {% endif %}
+            {% else %}
+                <a class="active">
+                    Welcome Guest!
+                </a>
+            {% endif %}
+        </div>
     </div>
     <div class="container">
         <img class="banner" src="../static/defaults/friendsHug.png"/>

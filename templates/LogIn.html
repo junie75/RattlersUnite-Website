@@ -22,21 +22,21 @@
         {% endif %}
 
         <div style="display: block;">
-            {{ form.studentID }}
-            {% for error in form.studentID.errors %}
+            {{ form.username }}
+            {% for error in form.username.errors %}
                 <span class="text-danger">{{ error }}</span><br>
             {% endfor %}
         </div>
         
         <div style="display: block;">
-            {{ form.studentName }}
-            {% for error in form.studentName.errors %}
+            {{ form.password }}
+            {% for error in form.password.errors %}
                 <span class="text-danger">{{ error }}</span><br>
             {% endfor %}
         </div>
 
         <div style="display: block;">
-            <button class="submitButton" type="submit">LOGIN</button>
+            {{ form.submit(class="submitButton") }}
         </div>
         
         <div style="margin-top: 30px;">
@@ -44,8 +44,8 @@
                 First Time Student
             </a>
             <span style="padding-left: 5px;">|</span>
-            <a class="externalLinks" href="{{ url_for('orgLogIn') }}">
-                Organization SSO
+            <a class="externalLinks" href="{{ url_for('orgsignup') }}">
+                First Time Organization
             </a>
         </div>
         <div style="margin-top: 5px;">
