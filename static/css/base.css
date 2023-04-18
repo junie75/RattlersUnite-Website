@@ -250,7 +250,7 @@ div.gridmenu a {
 
 .leaderboardTextCard{
     background-color: white;
-    max-width: 900px;
+    min-width: 900px;
     padding-bottom: 20px;
     margin: 30px auto 2px;
     border-radius: 10px;
