@@ -1,0 +1,46 @@
+{% extends 'orgbase.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="centered">
+            <p class="welcome">
+                Rattler's Unite Organization Portal
+            </p>
+        </div>
+    </div>
+
+    <div class="listmenu">
+        <div class="leaderboardCard">
+            <section class="boardbanner">
+                <p>Add Event</p>  
+            </section>    
+            <div class="eventFormCss">
+                {{ form.eventName.label }}
+                {{ form.eventName }}
+            </div>
+            <div class="eventFormCss">
+                {{ form.eventLocation.label }}
+                {{ form.eventLocation }}
+            </div>
+            <div class="eventFormCss">
+                {{ form.eventStartDate.label }}
+                {{ form.eventStartDate }}
+            </div>
+            <div class="eventFormCss">
+                {{ form.eventEndDate.label }}
+                {{ form.eventEndDate }}
+            </div>
+            <div class="eventFormCss">
+                {{ form.eventDescription.label }}
+                {{ form.eventDescription }}
+            </div>
+            <div class="eventFormCss">
+                {{ form.eventCategory.label }}
+                {{ form.eventCategory }}
+            </div>
+            <div class="eventFormCss">
+                {{ form.submit }}
+            </div>
+        </div> 
+    </div>
+{% endblock %}

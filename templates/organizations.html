@@ -4,11 +4,11 @@
     <p class="title">Organizations</p>
     <div class="gridmenu">
         {% for o in organizations %}
-            <a href="{{ url_for('organizationdetails', id=o['ID']) }}">
+            <a href="{{ url_for('profiledetails', id=o['id']) }}">
                 <div class="contentBox">
-                    <img src={{ o['OrgIcon'] }} class="boxPic"/>
+                    <img src={{ o.icon }} class="boxPic"/>
                     <div class="boxDetails">
-                        <p class="boxName">{{ o['Name']|text_limiter }}</p>
+                        <p class="boxName">{{ o.name|text_limiter }}</p>
                     </div>
                 </div>
             </a>

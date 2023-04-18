@@ -1,0 +1,42 @@
+{% extends 'orgbase.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="centered">
+            <p class="welcome">
+                Welcome to the Rattler's Unite Organization Portal!
+            </p>
+        </div>
+    </div>
+    
+    <div class="admingridmenu">
+        <a href="{{ url_for('add_event') }}">
+            <div class="contentBox">
+                <div class="boxDetails">
+                    <p class="boxName">Add Event</p>
+                </div>
+            </div>
+        </a>
+        <a href="{{ url_for('main') }}">
+            <div class="contentBox">
+                <div class="boxDetails">
+                    <p class="boxName">Edit Event</p>
+                </div>
+            </div>
+        </a>
+        <a href="{{ url_for('main') }}">
+            <div class="contentBox">
+                <div class="boxDetails">
+                    <p class="boxName">Remove Event</p>
+                </div>
+            </div>
+        </a>
+        <a href="{{ url_for('main') }}">
+            <div class="contentBox">
+                <div class="boxDetails">
+                    <p class="boxName">Edit Organization</p>
+                </div>
+            </div>
+        </a>
+    </div>
+{% endblock %}

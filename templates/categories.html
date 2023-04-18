@@ -9,7 +9,7 @@
         <div id="categories">
             <ul>
                 {% for c in CATEGORIES %}
-                    <li><a href="{{ url_for('search', category='{{ c[1] }}')}}">{{ c[1] }}</a></li>
+                    <li><a href={{ url_for('search', category=c[1])}}>{{ c[1] }}</a></li>
                 {% endfor %}
             </ul>
         </div>

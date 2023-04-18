@@ -1,11 +1,23 @@
-from flask import Flask, redirect, render_template, request, url_for, flash, session
+from flask import Flask, redirect, render_template, url_for, session
 from datetime import datetime
-from models import db, Event, Organization, Account, StudentAccount, OrganizationAccount, AdminAccount
-from forms import LoginForm, StudentSignUpForm, OrganizationSignUpForm
+from models import db, Event, Account, StudentAccount, OrganizationAccount, AdminAccount
+from forms import (
+    LoginForm,
+    StudentSignUpForm,
+    OrganizationSignUpForm,
+    EventForm,
+    OrganizationForm,
+)
 from globals import CATEGORIES
-from flask_login import LoginManager, login_required, current_user, login_user, logout_user
+from flask_login import (
+    LoginManager,
+    login_required,
+    current_user,
+    login_user,
+    logout_user,
+)
 from flask_bcrypt import Bcrypt
-from sqlalchemy import func, desc
+from sqlalchemy import func, asc
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///../db/RattlersUnite2.db"
@@ -23,6 +35,7 @@ with app.app_context():
     db.create_all()
     # make_db()
 
+
 @login_manager.user_loader
 def load_user(user_id: int):
     user = Account.query.get(user_id)
@@ -30,7 +43,9 @@ def load_user(user_id: int):
         return user
     return None
 
+
 app.jinja_env.globals.update(CATEGORIES=CATEGORIES)
+
 
 @app.template_filter()
 def text_limiter(text: str, org=False):
@@ -53,9 +68,9 @@ def fetch_events(amnt: int = None):
     """
     now = datetime.now()
     query = (
-        db.session.query(Event, Organization.Name)
-        .join(Organization)
-        .filter(Event.Organization == Organization.ID)
+        db.session.query(Event, OrganizationAccount.name)
+        .join(OrganizationAccount)
+        .filter(Event.Organization == OrganizationAccount.id)
     )
     query = query.filter(Event.EndDate > now)
 
@@ -64,7 +79,7 @@ def fetch_events(amnt: int = None):
         return query.order_by(func.random()).limit(amnt).all()
 
     # Return all random events that have not ended.
-    return query.all()
+    return query.order_by(Event.StartDate).all()
 
 
 def fetch_organizations(amnt: int = None):
@@ -74,12 +89,19 @@ def fetch_organizations(amnt: int = None):
 
     :param amnt: The amount of events we should fetch at random.
     """
+
     if amnt:
-        # Only return 5 random events that have not ended.
-        return Organization.query.order_by(func.random()).limit(amnt).all()
+        # Only return X random orgs
+        return (
+            Account.query.filter_by(staff=True)
+            .filter_by(admin=False)
+            .order_by(func.random())
+            .limit(amnt)
+            .all()
+        )
 
     # Return all random events that have not ended.
-    return Organization.query.all()
+    return Account.query.filter_by(staff=True).filter_by(admin=False).all()
 
 
 def fetch_leaderboards():
@@ -87,7 +109,7 @@ def fetch_leaderboards():
     This function grabs the name and points of every student in the
     Student table.
     """
-    return db.session.query(Account.name, Account.points).filter_by(staff=False).all()
+    return db.session.query(Account.name, Account.points).filter_by(staff=False).order_by(Account.points.desc()).all()
 
 
 def find_event(id: int):
@@ -99,13 +121,13 @@ def find_event(id: int):
     return Event.query.filter_by(ID=id).first()
 
 
-def find_organization(id):
+def find_profile(id):
     """
-    This function grabs the organization information of a specific organization.
+    This function grabs the profile information of a specific user/organization.
 
     :param id: The ID of the organization to look for.
     """
-    return Organization.query.filter_by(ID=id).first()
+    return Account.query.filter_by(id=id).first()
 
 
 def list_org_events(org_id):
@@ -117,21 +139,11 @@ def list_org_events(org_id):
     now = datetime.now()
     query = db.session.query(Event)
     query = query.filter(Event.EndDate > now)
-    query = query.filter(Organization.ID == org_id)
+    query = query.filter(Event.Organization == org_id)
 
     # We will return only events that are after the current local time.
     return query.all()
 
-# sign in
-def fetch_user(student_id: str):
-    """
-    This function fetches all of the information of one student based off their
-    ID number.
-
-    :param student_id: The ID of the user to fetch data from.
-    """
-    temp = Student.query.filter_by(StudentID=student_id).first()
-    return temp
 
 def fetch_organization(org_id: int):
     """
@@ -140,21 +152,8 @@ def fetch_organization(org_id: int):
 
     :param org_id: The ID of the organization to fetch data from.
     """
-    temp = Organization.query.filter_by(ID=org_id).first()
+    temp = Account.query.filter_by(id=org_id).first()
     return temp
-
-
-def getPoints(id: str):
-    """
-    This function gets the total points a student who is logged in has acumulated.
-
-    :param id: The logged in students' ID number.
-    """
-    temp = Student.query.filter_by(StudentID=id).first()
-    return temp.Points
-
-
-app.jinja_env.globals.update(getPoints=getPoints)
 
 
 ## Filter Functions
@@ -177,7 +176,6 @@ def format_datetime(start: datetime, end: datetime):
 ## Site Functions
 @app.route("/")
 def main():
-    print(current_user)
     events = fetch_events(amnt=5)
     orgs = fetch_organizations(amnt=5)
     # added username if it is in session, unknown if it is not
@@ -205,12 +203,12 @@ def leaderboards():
 
 @app.route("/search/<category>")
 def search(category):
-    events = fetch_events(True)
+    events = fetch_events()
 
     # Crappy for loop check for empty categories but it does it's job IG
     noEvents = True
-    for e in events:
-        if e["Category"] == category:
+    for e, o in events:
+        if e.Category == category:
             noEvents = False
             break
 
@@ -225,18 +223,19 @@ def eventdetails(id):
     return render_template("eventPage.html", event=event)
 
 
-@app.route("/orgdetails/<id>")
-def organizationdetails(id):
-    org = find_organization(id)
-    events = list_org_events(id)
-    return render_template("organizationPage.html", org=org, events=events)
+@app.route("/profile/<id>")
+def profiledetails(id, org=True):
+    if org:
+        org = find_profile(id)
+        events = list_org_events(id)
+        return render_template("organizationPage.html", org=org, events=events)
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('main'))
-    
+        return redirect(url_for("main"))
+
     form = LoginForm()
     if form.validate_on_submit():
         user = Account.query.filter_by(username=form.username.data).first()
@@ -259,7 +258,8 @@ def signup():
         return redirect(url_for("login"))
     return render_template("SignUp.html", form=form)
 
-@app.route('/orgsignup', methods=['GET', 'POST'])
+
+@app.route("/orgsignup", methods=["GET", "POST"])
 def orgsignup():
     form = OrganizationSignUpForm()
     if form.validate_on_submit():
@@ -270,6 +270,7 @@ def orgsignup():
         return redirect(url_for("login"))
     return render_template("OrgSignUp.html", form=form)
 
+
 @app.route("/logout")
 def logout():
     if current_user.is_authenticated:
@@ -277,22 +278,45 @@ def logout():
         session.clear()
     return redirect(url_for("main"))
 
+
 @app.route("/portal")
 @login_required
 def portal():
-    return render_template("SignUp.html")
+    return render_template("orghome.html")
 
-# @app.route("/add")
-# def add_event():
-#     form = EventForm()
-#     if form.validate_on_submit():
-#         conn = connect_db()
-#         conn.execute(
-#             f"INSERT INTO Events VALUES ({form.eventName}, {session['orgid']}, {form.eventStartDate}, {form.eventEndDate}, {form.eventLocation}, {form.eventDescription}, {form.eventCategory}, {form.eventIcon}, {form.eventBanner})"
-#         )
-#         conn.commit()
-#         return redirect(url_for("main"))
-#     return render_template('eventtable.html', form=form)
+
+@app.route("/portal/addevent")
+def add_event():
+    form = EventForm()
+    if form.validate_on_submit():
+        event = Event(
+            name=form.eventName.data,
+            organization=current_user.id,
+            startDate=form.eventStartDate.data,
+            endDate=form.eventEndDate,
+            description=form.eventDescription.data,
+            category=form.eventCategory.data,
+        )
+        db.session.add(event)
+        db.session.commit()
+        return render_template(url_for("portal"))
+    return render_template("addevent.html", form=form)
+
+
+@app.route("/portal/editorg")
+def edit_org():
+    form = OrganizationForm()
+    if form.validate_on_submit():
+        org = (
+            db.session.query(OrganizationAccount)
+            .filter(OrganizationAccount.ID == current_user.id)
+            .all()
+        )
+        org.AboutUs = form.orgDescription.data
+        db.session.commit()
+        return render_template(url_for("portal"))
+    return render_template("editorg.html", form=form)
+
 
 # @app.route("/edit/<id>")
 # def edit_event(id):
@@ -307,8 +331,6 @@ def portal():
 #         conn.commit()
 #         return redirect(url_for("main"))
 #     return render_template('eventtable.html', form=form)
-
-
 
 if __name__ == "__main__":
     app.run()
