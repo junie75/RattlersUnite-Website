@@ -13,6 +13,13 @@
             <img src="../static/defaults/STMUlogo.png" height="100px">
         </div>
         <h1>Login</h1>
+        
+        {% if error %}
+            <div style="display: block;">
+                <p style="color:red">Incorrect or invalid name or ID number.</p>
+            </div>
+        {% endif %}
+
         <div style="display: block;">
             <input type="text" id="StudentID" name="StudentID" placeholder="Student ID i.e.S00123456">
         </div>
