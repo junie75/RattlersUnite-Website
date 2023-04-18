@@ -1,16 +1,8 @@
 from flask import Flask, redirect, render_template, request, url_for, flash, session
-from flask_wtf import FlaskForm
-from wtforms import (
-    StringField,
-    TextAreaField,
-    DateTimeField,
-    FileField,
-    SubmitField,
-    SelectField,
-)
-from wtforms.validators import DataRequired
 from datetime import datetime
 from models import db, Event, Organization, Student
+from forms import LoginForm
+from globals import CATEGORIES
 
 # from create_db import make_db
 from sqlalchemy import func
@@ -25,19 +17,6 @@ with app.app_context():
     db.create_all()
     # make_db()
 
-CATEGORIES = [
-    ("Cooking", "Cooking"),
-    ("Dance", "Dance"),
-    ("Art", "Art"),
-    ("Gaming", "Gaming"),
-    ("Sports", "Sports"),
-    ("STEM", "STEM"),
-    ("Music", "Music"),
-    ("Travel", "Travel"),
-    ("Health", "Health"),
-    ("Education", "Education"),
-    ("Entertainment", "Entertainment"),
-]
 app.jinja_env.globals.update(CATEGORIES=CATEGORIES)
 
 
@@ -245,9 +224,21 @@ def organizationdetails(id):
     return render_template("organizationPage.html", org=org, events=events)
 
 
-@app.route("/login")
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template("LogIn.html")
+    form = LoginForm()
+    if form.validate_on_submit():
+        studentID = form.studentID.data
+        studentName = form.studentName.data
+        user = fetch_user(studentID)
+        if user and user.Name == studentName:
+            # stores account info
+            session["username"] = user.Name
+            session["id"] = studentID
+            return redirect(url_for("main"))
+        else:
+            return render_template("LogIn.html", error=True, form=form)
+    return render_template("LogIn.html", form=form)
 
 
 @app.route("/signup")
@@ -271,28 +262,6 @@ def signupMethod():
         return redirect(url_for("login"))
     else:
         return render_template("SignUp.html")
-
-
-# Method to allow user to sign in
-@app.route("/loginMethod", methods=["GET", "POST"])
-def loginMethod():
-    if request.method == "POST":
-        student_id = request.form["StudentID"]
-        name = request.form["Name"]
-        user = fetch_user(student_id)
-        if user and user.Name == name:
-            # stores account info
-            session["username"] = user.Name
-            session["id"] = student_id
-            # authentication succeeded, redirect to main page with confirmation
-            return redirect(url_for("main"))
-        else:
-            # authentication failed, show error message
-            return render_template("login.html", error="Invalid username or password")
-    else:
-        # display login form
-        return render_template("login.html")
-
 
 @app.route("/logout")
 def logout():
@@ -326,28 +295,6 @@ def logout():
 #         return redirect(url_for("main"))
 #     return render_template('eventtable.html', form=form)
 
-
-# Form for Event Adding/Editing
-class EventForm(FlaskForm):
-    eventName = StringField("Event Name", DataRequired())
-    eventLocation = StringField("Event Location", DataRequired())
-    eventStartDate = DateTimeField("Event Start Date", DataRequired())
-    eventEndDate = DateTimeField("Event End Date", DataRequired())
-    eventDescription = TextAreaField("Event Description", DataRequired())
-
-    choiceList = [("", "Select a Category")]
-    for c in CATEGORIES:
-        choiceList.append(c)
-
-    eventCategory = SelectField("Category", DataRequired(), choices=choiceList)
-
-    submit = SubmitField("Submit")
-
-
-# Form for Organization Description Editing
-class OrganizationForm(FlaskForm):
-    orgDescription = TextAreaField("Organization Description", DataRequired())
-    submit = SubmitField("Submit")
 
 
 if __name__ == "__main__":

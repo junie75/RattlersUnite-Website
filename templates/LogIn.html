@@ -8,7 +8,8 @@
 </head>
     
 <body>
-    <form action ="{{ url_for('loginMethod') }}" method = "POST" class ="box" action="login.html" method = "POST">
+    <form method = "POST" class="box">
+        {{ form.csrf_token }}
         <div class="loginLogo">
             <img src="../static/defaults/STMUlogo.png" height="100px">
         </div>
@@ -21,12 +22,17 @@
         {% endif %}
 
         <div style="display: block;">
-            <input type="text" id="StudentID" name="StudentID" placeholder="Student ID i.e.S00123456">
+            {{ form.studentID }}
+            {% for error in form.studentID.errors %}
+                <span class="text-danger">{{ error }}</span><br>
+            {% endfor %}
         </div>
         
-        
         <div style="display: block;">
-            <input type="text" id="Name" name="Name" placeholder="Name">
+            {{ form.studentName }}
+            {% for error in form.studentName.errors %}
+                <span class="text-danger">{{ error }}</span><br>
+            {% endfor %}
         </div>
 
         <div style="display: block;">
