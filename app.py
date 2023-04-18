@@ -17,7 +17,7 @@ from flask_login import (
     logout_user,
 )
 from flask_bcrypt import Bcrypt
-from sqlalchemy import func, asc
+from sqlalchemy import func
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///../db/RattlersUnite2.db"
