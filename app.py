@@ -1,40 +1,44 @@
 from flask import Flask, redirect, render_template, request, url_for, flash, session
+from flask_wtf import FlaskForm
+from wtforms import (
+    StringField,
+    TextAreaField,
+    DateTimeField,
+    FileField,
+    SubmitField,
+    SelectField,
+)
+from wtforms.validators import DataRequired
 from datetime import datetime
-from random import randint
-import sqlite3
+from models import db, Event, Organization, Student
+
+# from create_db import make_db
+from sqlalchemy import func
 
 app = Flask(__name__)
-app.secret_key = 'many random bytes'
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///../db/RattlersUnite2.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.secret_key = "many random bytes"
+db.init_app(app)
 
+with app.app_context():
+    db.create_all()
+    # make_db()
 
-## DB Functions
-def connect_db():
-    """
-    This function connects the DB for data access.
-    """
-    conn = sqlite3.connect("./db/RattlersUnite.db")
-    conn.row_factory = sqlite3.Row
-    return conn
-
-
-def sql_time_check(e: str):
-    """
-    This function returns whether the provided ISO datetime is
-    before the current datetime.
-    """
-    current_date = datetime.now().isoformat()
-    return e < current_date
-
-
-def sql_list_time_check(s: list):
-    """
-    This function removes any event from the provided DB list
-    that is before the current date.
-    """
-    for e in s[:]:
-        if sql_time_check(e["EndDate"]):
-            s.remove(e)
-    return s
+CATEGORIES = [
+    ("Cooking", "Cooking"),
+    ("Dance", "Dance"),
+    ("Art", "Art"),
+    ("Gaming", "Gaming"),
+    ("Sports", "Sports"),
+    ("STEM", "STEM"),
+    ("Music", "Music"),
+    ("Travel", "Travel"),
+    ("Health", "Health"),
+    ("Education", "Education"),
+    ("Entertainment", "Entertainment"),
+]
+app.jinja_env.globals.update(CATEGORIES=CATEGORIES)
 
 
 @app.template_filter()
@@ -49,52 +53,27 @@ def text_limiter(text: str, org=False):
         return text
 
 
-def fetch_events(cat: bool = False, amnt: int = None):
+def fetch_events(amnt: int = None):
     """
     This function fetches every event and its' information in the
     Events table.
 
-    :param cat: Grabs category from DB for use in category searching
-        if set to True.
     :param amnt: The amount of events we should fetch at random.
     """
-    conn = connect_db()
-
-    # Grab all info but Category if we are not category searching.
-    if not cat:
-        events = conn.execute(
-            f"SELECT Events.ID, Events.Name, Organizations.Name AS Organization, StartDate, EndDate, Location, EventIcon FROM Events JOIN Organizations ON Organizations.ID = Events.Organization ORDER BY StartDate"
-        )
-    else:
-        events = conn.execute(
-            f"SELECT Events.ID, Events.Name, Organizations.Name AS Organization, StartDate, EndDate, Location, Category, EventIcon FROM Events JOIN Organizations ON Organizations.ID = Events.Organization ORDER BY StartDate"
-        )
-
-    temp = events.fetchall()
+    now = datetime.now()
+    query = (
+        db.session.query(Event, Organization.Name)
+        .join(Organization)
+        .filter(Event.Organization == Organization.ID)
+    )
+    query = query.filter(Event.EndDate > now)
 
     if amnt:
-        rand_temp = []
-        count = 0
+        # Only return 5 random events that have not ended.
+        return query.order_by(func.random()).limit(amnt).all()
 
-        while count < amnt:
-            if temp == []:
-                count = 6
-                continue
-
-            e = temp[randint(0, len(temp) - 1)]
-
-            if sql_time_check(e["EndDate"]):
-                temp.remove(e)
-                continue
-            else:
-                rand_temp.append(e)
-                temp.remove(e)
-                count += 1
-
-        return rand_temp
-
-    # We will return only events that are after the current local time.
-    return sql_list_time_check(temp)
+    # Return all random events that have not ended.
+    return query.all()
 
 
 def fetch_organizations(amnt: int = None):
@@ -104,29 +83,12 @@ def fetch_organizations(amnt: int = None):
 
     :param amnt: The amount of events we should fetch at random.
     """
-    conn = connect_db()
-    orgs = conn.execute("SELECT Name, OrgIcon, ID FROM Organizations")
-
-    org = orgs.fetchall()
-
     if amnt:
-        rand_temp = []
-        count = 0
+        # Only return 5 random events that have not ended.
+        return Organization.query.order_by(func.random()).limit(amnt).all()
 
-        while count < amnt:
-            if org == []:
-                count = 6
-                continue
-
-            o = org[randint(0, len(org) - 1)]
-
-            rand_temp.append(o)
-            org.remove(o)
-            count += 1
-
-        return rand_temp
-
-    return org
+    # Return all random events that have not ended.
+    return Organization.query.all()
 
 
 def fetch_leaderboards():
@@ -134,9 +96,7 @@ def fetch_leaderboards():
     This function grabs the name and points of every student in the
     Student table.
     """
-    conn = connect_db()
-    board = conn.execute("SELECT Name, Points FROM Students")
-    return board.fetchall()
+    return db.session.query(Student.Name, Student.Points).all()
 
 
 def find_event(id: int):
@@ -145,16 +105,7 @@ def find_event(id: int):
 
     :param id: The ID of the event to look for.
     """
-    conn = connect_db()
-    event = conn.execute(
-        f"SELECT Events.Name, Organizations.Name AS Organization, StartDate, EndDate, Location, EventBanner, Description FROM Events JOIN Organizations ON Organizations.ID = Events.Organization WHERE Events.ID = {id}"
-    )
-    temp = event.fetchall()
-    print(temp[0].keys())
-
-    # Since we are only looking for 1 event by default, we should just
-    # return the first and only element
-    return temp[0]
+    return Event.query.filter_by(ID=id).first()
 
 
 def find_organization(id):
@@ -163,15 +114,7 @@ def find_organization(id):
 
     :param id: The ID of the organization to look for.
     """
-    conn = connect_db()
-    org = conn.execute(
-        f"SELECT Name, OrgIcon, AboutUs FROM Organizations WHERE Organizations.ID = {id}"
-    )
-    temp = org.fetchall()
-
-    # Since we are only looking for 1 organization by default, we should just
-    # return the first and only element
-    return temp[0]
+    return Organization.query.filter_by(ID=id).first()
 
 
 def list_org_events(org_id):
@@ -180,14 +123,13 @@ def list_org_events(org_id):
 
     :param org_id: The ID of the organization we want events from.
     """
-    conn = connect_db()
-    events = conn.execute(
-        f"SELECT Events.ID, Events.Name, StartDate, EndDate, Location, EventIcon FROM Events WHERE Events.Organization = {org_id} ORDER BY StartDate"
-    )
-    temp = events.fetchall()
+    now = datetime.now()
+    query = db.session.query(Event)
+    query = query.filter(Event.EndDate > now)
+    query = query.filter(Organization.ID == org_id)
 
     # We will return only events that are after the current local time.
-    return sql_list_time_check(temp)
+    return query.all()
 
 
 # signup
@@ -198,11 +140,9 @@ def insert_student_data(student_id: str, name: str):
     :param student_id: The ID of the new user.
     :param name: The name of the student
     """
-    conn = connect_db()
-    conn.execute(
-        f"INSERT INTO Students (StudentID, Name) VALUES ({student_id}, {name})"
-    )
-    conn.commit()
+    new_student = Student(StudentID=student_id, Name=name)
+    db.session.add(new_student)
+    db.session.commit()
 
 
 # sign in
@@ -211,13 +151,11 @@ def fetch_user(student_id: str):
     This function fetches all of the information of one student based off their
     ID number.
 
-    :param student_id: THe ID of the user to fetch data from.
+    :param student_id: The ID of the user to fetch data from.
     """
-    conn = connect_db()
-    user = conn.execute(
-        f"SELECT * FROM Students WHERE StudentID = '{student_id}'"
-    ).fetchone()
-    return user
+    temp = Student.query.filter_by(StudentID=student_id).first()
+    print(temp)
+    return temp
 
 
 def getPoints(id: str):
@@ -226,33 +164,27 @@ def getPoints(id: str):
 
     :param id: The logged in students' ID number.
     """
-    conn = connect_db()
-    user = conn.execute(
-        f"SELECT Points from Students WHERE StudentID = '{id}'"
-    )
-    temp = user.fetchall()
-    return temp[0]['Points']
+    temp = Student.query.filter_by(StudentID=id).first()
+    return temp.Points
+
 
 app.jinja_env.globals.update(getPoints=getPoints)
 
+
 ## Filter Functions
 @app.template_filter()
-def format_datetime(startiso: str, endiso: str):
+def format_datetime(start: datetime, end: datetime):
     """
     This function takes a string that is in ISO format and converts it
     to a string in datetime format.
-
-    :param iso: The ISO format string we are converting to datetime.
     """
-    startDt = datetime.fromisoformat(startiso)
-    endDt = datetime.fromisoformat(endiso)
 
-    if endDt.day == startDt.day:
-        startStr = datetime.strftime(startDt, "%b %d | %I:%M%p")
-        endStr = datetime.strftime(endDt, " - %I:%M%p CT")
+    if start.day == end.day:
+        startStr = datetime.strftime(start, "%b %d | %I:%M%p")
+        endStr = datetime.strftime(end, " - %I:%M%p CT")
     else:
-        startStr = datetime.strftime(startDt, "%b %d - %I:%M%p")
-        endStr = datetime.strftime(endDt, " to %b %d - %I:%M%p CT")
+        startStr = datetime.strftime(start, "%b %d - %I:%M%p")
+        endStr = datetime.strftime(end, " to %b %d - %I:%M%p CT")
     return startStr + endStr
 
 
@@ -262,9 +194,8 @@ def main():
     events = fetch_events(amnt=5)
     orgs = fetch_organizations(amnt=5)
     a = session.get("username", None)
-    #added username if it is in session, unknown if it is not
-    return render_template("home.html", events=events, organizations=orgs, 
-                           name=a)
+    # added username if it is in session, unknown if it is not
+    return render_template("home.html", events=events, organizations=orgs, name=a)
 
 
 @app.route("/events")
@@ -349,9 +280,9 @@ def loginMethod():
         student_id = request.form["StudentID"]
         name = request.form["Name"]
         user = fetch_user(student_id)
-        if user and user["Name"] == name:
-            #stores account info
-            session["username"] = user["Name"]
+        if user and user.Name == name:
+            # stores account info
+            session["username"] = user.Name
             session["id"] = student_id
             # authentication succeeded, redirect to main page with confirmation
             return redirect(url_for("main"))
@@ -361,11 +292,62 @@ def loginMethod():
     else:
         # display login form
         return render_template("login.html")
-    
+
+
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for("main"))
+
+
+# @app.route("/add")
+# def add_event():
+#     form = EventForm()
+#     if form.validate_on_submit():
+#         conn = connect_db()
+#         conn.execute(
+#             f"INSERT INTO Events VALUES ({form.eventName}, {session['orgid']}, {form.eventStartDate}, {form.eventEndDate}, {form.eventLocation}, {form.eventDescription}, {form.eventCategory}, {form.eventIcon}, {form.eventBanner})"
+#         )
+#         conn.commit()
+#         return redirect(url_for("main"))
+#     return render_template('eventtable.html', form=form)
+
+# @app.route("/edit/<id>")
+# def edit_event(id):
+#     event = find_event(id)
+#     form = EventForm(event[0])
+
+#     if form.validate_on_submit():
+#         conn = connect_db()
+#         conn.execute(
+#             f"INSERT INTO Events VALUES ({form.eventName}, {orgID}, {form.eventStartDate}, {form.eventEndDate}, {form.eventLocation}, {form.eventDescription}, {form.eventCategory}, {form.eventIcon}, {form.eventBanner})"
+#         )
+#         conn.commit()
+#         return redirect(url_for("main"))
+#     return render_template('eventtable.html', form=form)
+
+
+# Form for Event Adding/Editing
+class EventForm(FlaskForm):
+    eventName = StringField("Event Name", DataRequired())
+    eventLocation = StringField("Event Location", DataRequired())
+    eventStartDate = DateTimeField("Event Start Date", DataRequired())
+    eventEndDate = DateTimeField("Event End Date", DataRequired())
+    eventDescription = TextAreaField("Event Description", DataRequired())
+
+    choiceList = [("", "Select a Category")]
+    for c in CATEGORIES:
+        choiceList.append(c)
+
+    eventCategory = SelectField("Category", DataRequired(), choices=choiceList)
+
+    submit = SubmitField("Submit")
+
+
+# Form for Organization Description Editing
+class OrganizationForm(FlaskForm):
+    orgDescription = TextAreaField("Organization Description", DataRequired())
+    submit = SubmitField("Submit")
 
 
 if __name__ == "__main__":

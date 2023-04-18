@@ -1,14 +1,21 @@
-import sqlite3
+from models import db, Event, Student, Organization
+from datetime import datetime, timedelta
 
 
-def main():
-    connection = sqlite3.connect("./db/events.db")
+def make_db():
+    org = Organization(Name="Technical Support Center", AboutUs="Welcome to the TSC!")
+    event = Event(
+        Name="David's Birthday Party",
+        Organization=1,
+        StartDate=(datetime.now() + timedelta(5)),
+        EndDate=(datetime.now() + timedelta(5, hours=4)),
+        Location="Technical Support Center",
+        Description="Some tech guy's birthday party.",
+        Category="Entertainment",
+    )
+    student = Student(StudentID="S00693356", Name="Weiss Schnee", Points="9001")
 
-    with open("db_script.sql") as f:
-        connection.executescript(f.read())
-
-    connection.close()
-
-
-if __name__ == "__main__":
-    main()
+    db.session.add(org)
+    db.session.add(event)
+    db.session.add(student)
+    db.session.commit()
