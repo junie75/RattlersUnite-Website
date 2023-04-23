@@ -9,17 +9,19 @@
         </div>
     </div>
 
-    <div class="listmenu">
-        <div class="leaderboardCard">
-            <section class="boardbanner">
-                <p>Edit Organization Description</p>  
-            </section>    
-            <div class="eventFormCss">
-                {{ form.orgDescription }}
-            </div>
-            <div class="eventFormCss">
-                {{ form.submit }}
-            </div>
-        </div> 
-    </div>
+    <form method = "POST" class="leaderboardCard">
+        {{ form.csrf_token }}
+        <section class="boardbanner">
+            <p>Edit Organization Description</p>  
+        </section>
+        <div class="eventFormCss">
+            {{ form.about.label }}
+        </div>
+        <div class="eventFormCss">
+            {{ form.about }}
+        </div>
+        <div class="eventFormCss">
+            {{ form.submit }}
+        </div>
+    </form> 
 {% endblock %}

@@ -410,3 +410,22 @@ footer p{
 .eventFormCss {
     margin: 25px 25px -5px;
 }
+
+.eventFormCard{
+    background-color: white;
+    min-height: 500px;
+    max-height: 550px;
+    min-width: 1000px;
+    max-width: 1100px;
+    padding-bottom: 20px;
+    margin: 30px auto;
+    border-radius: 10px;
+    position:relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+textarea {
+    min-width: 500px;
+    min-height: 150px;
+}

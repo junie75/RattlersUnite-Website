@@ -2,14 +2,13 @@ from flask_wtf import FlaskForm
 from wtforms import (
     StringField,
     TextAreaField,
-    DateTimeField,
     FileField,
     SubmitField,
     SelectField,
     PasswordField,
-    IntegerField,
+    DateTimeLocalField,
 )
-from wtforms.validators import DataRequired, ValidationError, EqualTo
+from wtforms.validators import DataRequired, ValidationError
 from models import StudentAccount, OrganizationAccount, AdminAccount
 from globals import CATEGORIES
 
@@ -37,26 +36,35 @@ class AdminLoginForm(FlaskForm):
 
 # Form for Event Adding/Editing
 class EventForm(FlaskForm):
-    eventName = StringField("Event Name", validators=[DataRequired()])
-    eventLocation = StringField("Event Location", validators=[DataRequired()])
-    eventStartDate = DateTimeField("Event Start Date", validators=[DataRequired()])
-    eventEndDate = DateTimeField("Event End Date", validators=[DataRequired()])
-    eventDescription = TextAreaField("Event Description", validators=[DataRequired()])
+    Name = StringField("Event Name", validators=[DataRequired()])
+    Location = StringField("Event Location", validators=[DataRequired()])
+    StartDate = DateTimeLocalField("Event Start Date/Time", format='%Y-%m-%dT%H:%M', validators=[DataRequired()])
+    EndDate = DateTimeLocalField("Event End Date", format='%Y-%m-%dT%H:%M', validators=[DataRequired()])
+    Description = TextAreaField("Event Description", validators=[DataRequired()])
 
     choiceList = [("", "Select a Category")]
     for c in CATEGORIES:
         choiceList.append(c)
 
-    eventCategory = SelectField(
+    Category = SelectField(
         "Category", validators=[DataRequired()], choices=choiceList
     )
 
     submit = SubmitField("Submit")
 
+    def validate(self, extra_validators=None):
+        if not FlaskForm.validate(self):
+            return False
+
+        if self.EndDate.data < self.StartDate.data:
+            self.EndDate.errors.append('End Date must be greater than Start Date')
+            return False
+
+        return True
 
 # Form for Organization Description Editing
 class OrganizationForm(FlaskForm):
-    orgDescription = TextAreaField(
+    about = TextAreaField(
         "Organization Description", validators=[DataRequired()]
     )
     submit = SubmitField("Submit")

@@ -1,5 +1,4 @@
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime, timedelta
 from flask_login import UserMixin
 from flask_bcrypt import generate_password_hash, check_password_hash
 
@@ -12,10 +11,8 @@ class Event(db.Model):
     ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     Name = db.Column(db.String, nullable=False)
     Organization = db.Column(db.Integer, db.ForeignKey("Accounts.id"))
-    StartDate = db.Column(db.DateTime, nullable=False, default=datetime.now())
-    EndDate = db.Column(
-        db.DateTime, nullable=False, default=(datetime.now() + timedelta(1))
-    )
+    StartDate = db.Column(db.DateTime, nullable=False)
+    EndDate = db.Column(db.DateTime, nullable=False)
     Location = db.Column(db.String, nullable=False, default="St. Mary's University")
     Description = db.Column(db.String, nullable=False)
     Category = db.Column(db.String, nullable=False)

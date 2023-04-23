@@ -12,49 +12,49 @@
     <form method = "POST" class="eventFormCard">
         {{ form.csrf_token }}
         <section class="boardbanner">
-            <p>Add Event</p>  
+            <p>Edit Event</p>  
         </section>    
         <div class="eventFormCss">
-            {{ form.eventName.label }}
-            {{ form.eventName }}
-            {% for error in form.eventName.errors %}
+            {{ form.Name.label }}
+            {{ form.Name }}
+            {% for error in form.Name.errors %}
                 <span class="text-danger">{{ error }}</span><br>
             {% endfor %}
         </div>
         <div class="eventFormCss">
-            {{ form.eventLocation.label }}
-            {{ form.eventLocation }}
-            {% for error in form.eventLocation.errors %}
+            {{ form.Location.label }}
+            {{ form.Location }}
+            {% for error in form.Location.errors %}
                 <span class="text-danger">{{ error }}</span><br>
             {% endfor %}
         </div>
         <div class="eventFormCss">
-            {{ form.eventStartDate.label }}
-            {{ form.eventStartDate }}
-            {% for error in form.eventStartDate.errors %}
+            {{ form.StartDate.label }}
+            {{ form.StartDate }}
+            {% for error in form.StartDate.errors %}
                 <span class="text-danger">{{ error }}</span><br>
             {% endfor %}
         </div>
         <div class="eventFormCss">
-            {{ form.eventEndDate.label }}
-            {{ form.eventEndDate }}
-            {% for error in form.eventEndDate.errors %}
+            {{ form.EndDate.label }}
+            {{ form.EndDate }}
+            {% for error in form.EndDate.errors %}
                 <span class="text-danger">{{ error }}</span><br>
             {% endfor %}
         </div>
         <div class="eventFormCss">
-            {{ form.eventDescription.label }}
+            {{ form.Description.label }}
         </div>
         <div class="eventFormCss">
-            {{ form.eventDescription }}
-            {% for error in form.eventDescription.errors %}
+            {{ form.Description }}
+            {% for error in form.Description.errors %}
                 <span class="text-danger">{{ error }}</span><br>
             {% endfor %}
         </div>
         <div class="eventFormCss">
-            {{ form.eventCategory.label }}
-            {{ form.eventCategory }}
-            {% for error in form.eventCategory.errors %}
+            {{ form.Category.label }}
+            {{ form.Category }}
+            {% for error in form.Category.errors %}
                 <span class="text-danger">{{ error }}</span><br>
             {% endfor %}
         </div>
