@@ -285,52 +285,46 @@ def portal():
     return render_template("orghome.html")
 
 
-@app.route("/portal/addevent")
+@app.route("/portal/addevent", methods=["GET", "POST"])
 def add_event():
     form = EventForm()
     if form.validate_on_submit():
         event = Event(
-            name=form.eventName.data,
-            organization=current_user.id,
-            startDate=form.eventStartDate.data,
-            endDate=form.eventEndDate,
-            description=form.eventDescription.data,
-            category=form.eventCategory.data,
+            Name=form.Name.data,
+            Organization=current_user.id,
+            StartDate=form.StartDate.data,
+            EndDate=form.EndDate.data,
+            Description=form.Description.data,
+            Category=form.Category.data,
         )
         db.session.add(event)
         db.session.commit()
-        return render_template(url_for("portal"))
+        return redirect(url_for("portal"))
     return render_template("addevent.html", form=form)
 
 
-@app.route("/portal/editorg")
+@app.route("/portal/editorg", methods=["GET", "POST"])
 def edit_org():
-    form = OrganizationForm()
+    org = Account.query.get(current_user.id)
+    form = OrganizationForm(obj=org)
+    form.populate_obj(org)
     if form.validate_on_submit():
-        org = (
-            db.session.query(OrganizationAccount)
-            .filter(OrganizationAccount.ID == current_user.id)
-            .all()
-        )
-        org.AboutUs = form.orgDescription.data
+        form.populate_obj(org)
         db.session.commit()
-        return render_template(url_for("portal"))
+        return redirect(url_for("portal"))
     return render_template("editorg.html", form=form)
 
 
-# @app.route("/edit/<id>")
-# def edit_event(id):
-#     event = find_event(id)
-#     form = EventForm(event[0])
+@app.route("/portal/editevent/<id>", methods=["GET", "POST"])
+def edit_event(id):
+    event = find_event(id)
+    form = EventForm(obj=event)
 
-#     if form.validate_on_submit():
-#         conn = connect_db()
-#         conn.execute(
-#             f"INSERT INTO Events VALUES ({form.eventName}, {orgID}, {form.eventStartDate}, {form.eventEndDate}, {form.eventLocation}, {form.eventDescription}, {form.eventCategory}, {form.eventIcon}, {form.eventBanner})"
-#         )
-#         conn.commit()
-#         return redirect(url_for("main"))
-#     return render_template('eventtable.html', form=form)
+    if form.validate_on_submit():
+        form.populate_obj(event)
+        db.session.commit()
+        return redirect(url_for("portal"))
+    return render_template('editevent.html', form=form)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(port=5001)
