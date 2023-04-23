@@ -3,6 +3,7 @@ from wtforms import (
     StringField,
     TextAreaField,
     DateTimeField,
+    DateTimeLocalField,
     FileField,
     SubmitField,
     SelectField,
@@ -39,8 +40,8 @@ class AdminLoginForm(FlaskForm):
 class EventForm(FlaskForm):
     eventName = StringField("Event Name", validators=[DataRequired()])
     eventLocation = StringField("Event Location", validators=[DataRequired()])
-    eventStartDate = DateTimeField("Event Start Date", validators=[DataRequired()])
-    eventEndDate = DateTimeField("Event End Date", validators=[DataRequired()])
+    eventStartDate = DateTimeLocalField("Event Start Date", validators=[DataRequired()])
+    eventEndDate = DateTimeLocalField("Event End Date", validators=[DataRequired()])
     eventDescription = TextAreaField("Event Description", validators=[DataRequired()])
 
     choiceList = [("", "Select a Category")]
