@@ -128,6 +128,50 @@ div.gridmenu a {
     margin-left: 20px;
 }
 
+/* modified gridmenu for organization portal*/
+
+.gridmenu.orgPortal{
+    overflow-x: visible;
+    margin: auto;
+    margin-top: 200px;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.gridmenu.orgPortal a{
+    margin-left: auto;
+}
+
+/* modified content boxes for org portal*/
+.contentBox.orgPortal{
+    border: 1px solid black;
+    background-color: #fff;
+    position: relative;
+    box-shadow: 1px 1px 2px #000;
+    min-width: 100px;
+    max-width: 100px;
+    min-height: 110px;
+    max-height: 110px;
+    border-radius: 10px;
+    text-align: center;
+    position:relative;
+    margin: 30px;
+    font-size: 23px;
+    font-weight: bold;
+
+}
+.contentBox.orgPortal p{
+    position: absolute;
+    top:22px;
+}
+
+#orgPortalTitle{
+    position: absolute;
+    color: white;
+    top:200px;
+    left: 16%;
+    font-size: 40px;
+}
+
 /* Event/Organization Boxes */
 .contentBox{
     border: 1px solid black;
