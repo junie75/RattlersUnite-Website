@@ -10,7 +10,7 @@
 </div>
 
 {% if events %}
-<p class="eventTable title"> Choose an event</p>
+<p class="eventTable title"> Choose an event to {{ method }}</p>
 <table class="eventTable">
     <thead>
         <tr>
@@ -23,14 +23,23 @@
     <tbody>
         {% for e in events %}
         <!--{ for i in range(3) }-->
-        
+            {% if method == 'edit' %}
             <tr>
                 <td scope="row"><a href="{{url_for('edit_event', id=e['ID']) }}">{{e['Name'|text_limiter]}}</a></td>
                 <td><a href="{{url_for('edit_event', id=e['ID']) }}">{{ e['StartDate']|format_datetime(e['EndDate'])}}</a></td>
                 <td><a href="{{url_for('edit_event', id=e['ID']) }}">{{ e['Location']}}</a></td>
                 <td><a href="{{url_for('edit_event', id=e['ID']) }}">{{ e['Description'|text_limiter]}}</a></td>
             </tr>
-        
+            {% elif method == 'delete' %}
+            <tr>
+                <td scope="row"><a href="{{url_for('delete_confirm', id=e['ID']) }}">{{e['Name'|text_limiter]}}</a></td>
+                <td><a href="{{url_for('delete_confirm', id=e['ID']) }}">{{ e['StartDate']|format_datetime(e['EndDate'])}}</a></td>
+                <td><a href="{{url_for('delete_confirm', id=e['ID']) }}">{{ e['Location']}}</a></td>
+                <td><a href="{{url_for('delete_confirm', id=e['ID']) }}">{{ e['Description'|text_limiter]}}</a></td>
+            </tr>
+            {% else %}
+            <tr><td>Method not defined</td></tr>
+            {% endif %}
         <!--Can delete next two rows when connecting to db
         <a>
             <tr>

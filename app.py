@@ -315,12 +315,12 @@ def edit_org():
     return render_template("editorg.html", form=form)
 
 #organization choose an event to edit/delete
-#event clicked should send event id to next method
-@app.route("/portal/eventtables")
-def event_tables():
+#event clicked should send event id to next method along w method name
+@app.route("/portal/eventtables/<method>")
+def event_tables(method):
     orgID = current_user.id
     events = list_org_events(current_user.id)
-    return render_template("eventTables.html", events=events, org = orgID)
+    return render_template("eventTables.html", events=events, org = orgID, method=method)
 
 
 @app.route("/portal/editevent/<id>", methods=["GET", "POST"])
@@ -333,6 +333,19 @@ def edit_event(id):
         db.session.commit()
         return redirect(url_for("portal"))
     return render_template('editevent.html', form=form)
+
+@app.route("/portal/deleteevent/<id>")
+def delete_event(id):
+    event = find_event(id)
+    db.session.delete(event)
+    db.session.commit()
+    return redirect(url_for("portal"))
+
+#confirm if org wants to delete event
+@app.route("/portal/deleteConfirmation/<id>")
+def delete_confirm(id):
+    event = find_event(id)
+    return render_template('deleteconfirm.html', event=event)
 
 if __name__ == "__main__":
     app.run(port=5001)
