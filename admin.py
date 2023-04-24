@@ -111,7 +111,14 @@ def add_points():
 
     if form.validate_on_submit():
         account = Account.query.filter_by(id=form.student_id.data).first()
-        account.points = account.points + form.points.data
+        new_points = account.points + form.points.data
+
+        # Make sure no users hit negative
+        if new_points < 0:
+            account.points = 0
+        else:
+            account.points = new_points
+            
         db.session.commit()
         return redirect(url_for('admin.portal'))
 
