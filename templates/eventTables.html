@@ -22,7 +22,6 @@
     </thead>
     <tbody>
         {% for e in events %}
-        <!--{ for i in range(3) }-->
             {% if method == 'edit' %}
             <tr>
                 <td scope="row"><a href="{{url_for('edit_event', id=e['ID']) }}">{{e['Name'|text_limiter]}}</a></td>
@@ -40,23 +39,6 @@
             {% else %}
             <tr><td>Method not defined</td></tr>
             {% endif %}
-        <!--Can delete next two rows when connecting to db
-        <a>
-            <tr>
-                <td scope="row">Witness on Wednesday</td>
-                <td>April 14th 11:00am-2:00pm</td>
-                <td>University Center, Atrium Information Table 4</td>
-                <td>https://stmu.emscloudservice.com/calendar/EventDetails.aspx?EventDetailId=8548907</td>
-            </tr>
-        </a>
-        <a>
-            <tr>
-                <td scope="row">BSU Yoga Day</td>
-                <td>April 26th 2:00pm-3:00pm</td>
-                <td>St. Mary's University</td>
-                <td>Relax your mind before finals with a free stress-relieving yoga day led by a student instructor! Meet on the 2nd floor of the AACC at the movement studio near the racquetball court. Can't wait to see you all there!</td>
-            </tr>
-        </a>-->
         {% endfor %}
     </tbody>
 </table>
