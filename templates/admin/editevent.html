@@ -1,4 +1,4 @@
-{% extends 'orgbase.html' %}
+{% extends 'admin/orgbase.html' %}
 
 {% block content %}
     <div class="container">
@@ -12,7 +12,7 @@
     <form method = "POST" class="eventFormCard" enctype="multipart/form-data">
         {{ form.csrf_token }}
         <section class="boardbanner">
-            <p>Add Event</p>  
+            <p>Edit Event</p>  
         </section>    
         <div class="eventFormCss">
             {{ form.Name.label }}
@@ -68,7 +68,7 @@
         <div class="eventFormCss">
             {{ form.EventBanner.label }}
             {{ form.EventBanner }}
-            {% for error in form.EventBanner.errors %}
+            {% for error in form.EventIcon.errors %}
                 <span class="text-danger">{{ error }}</span><br>
             {% endfor %}
         </div>

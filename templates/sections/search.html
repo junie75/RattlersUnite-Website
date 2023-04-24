@@ -1,4 +1,4 @@
-{% extends 'categories.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
     <p class="title">Events with Category '{{ category }}'</p>
@@ -6,7 +6,7 @@
         {% if not noEvents %}
             {% for e, o in events %}
                 {% if e.Category == category %}
-                    <a href="{{ url_for('eventdetails', id=e['id']) }}">
+                    <a href="{{ url_for('main_view.eventdetails', id=e['id']) }}">
                         <div class="contentBox">
                             <img src={{ e.EventIcon }} class="eventImg"/>
                             <div class="boxDetails">
@@ -29,4 +29,6 @@
             </div>
         {% endif %}
     </div>
+
+    {% include 'modules/categories.html' %}
 {% endblock %}

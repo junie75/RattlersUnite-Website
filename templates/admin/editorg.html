@@ -1,4 +1,4 @@
-{% extends 'orgbase.html' %}
+{% extends 'admin/orgbase.html' %}
 
 {% block content %}
     <div class="container">
@@ -19,6 +19,13 @@
         </div>
         <div class="eventFormCss">
             {{ form.about }}
+        </div>
+        <div class="eventFormCss">
+            {{ form.icon.label }}
+            {{ form.icon }}
+            {% for error in form.icon.errors %}
+                <span class="text-danger">{{ error }}</span><br>
+            {% endfor %}
         </div>
         <div class="eventFormCss">
             {{ form.submit }}

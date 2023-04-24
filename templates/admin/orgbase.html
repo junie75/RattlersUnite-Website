@@ -9,15 +9,15 @@
 </head>
 <body>
     <div class="topnav" stylesheet="">
-        <a class="active" href="{{ url_for('main') }}">Home</a>
+        <a class="active" href="{{ url_for('main_view.main') }}">Home</a>
 
         <!--if user is not logged in display default login button-->
         <div class="login">
-            <a href="{{ url_for('logout') }}">Logout</a>
+            <a href="{{ url_for('login.logout') }}">Logout</a>
         </div>
 
         <div class="login">
-            <a href="{{ url_for('portal') }}">Org Portal</a>
+            <a href="{{ url_for('admin.portal') }}">Org Portal</a>
         </div>
 
         <div class="login">

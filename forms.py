@@ -64,13 +64,32 @@ class EventForm(FlaskForm):
             return False
 
         return True
+    
+    def populate_obj(self, obj, ignore=[]):
+        """
+        Populates the attributes of the passed `obj` with data from the form's
+        fields, ignoring disabled fields.
+        """
+        for name, field in self._fields.items():
+            if name not in ignore:
+                field.populate_obj(obj, name)
 
 # Form for Organization Description Editing
 class OrganizationForm(FlaskForm):
     about = TextAreaField(
         "Organization Description", validators=[DataRequired()]
     )
+    icon = FileField("Profile Image", validators=[FileAllowed(['jpg', 'png'], 'Only JPGs or PNGs are supported.')])
     submit = SubmitField("Submit")
+
+    def populate_obj(self, obj, ignore=['icon']):
+        """
+        Populates the attributes of the passed `obj` with data from the form's
+        fields, ignoring disabled fields.
+        """
+        for name, field in self._fields.items():
+            if name not in ignore:
+                field.populate_obj(obj, name)
 
 
 class StudentSignUpForm(FlaskForm):
