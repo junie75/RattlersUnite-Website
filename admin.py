@@ -1,4 +1,4 @@
-from flask import render_template, Blueprint, redirect, url_for
+from flask import render_template, Blueprint, redirect, url_for, abort
 from core import save_image, clean_image_folder
 from views import find_event
 from flask_login import login_required, current_user
@@ -9,13 +9,24 @@ admin_view = Blueprint("admin", __name__)
 
 
 @admin_view.route("/portal")
-@login_required
 def portal():
+    if not current_user.is_authenticated:
+        return redirect(url_for("login.login"))
+
+    if not current_user.admin and not current_user.staff:
+        abort(403)
+
     return render_template("admin/orghome.html")
 
 
 @admin_view.route("/portal/addevent", methods=["GET", "POST"])
 def add_event():
+    if not current_user.is_authenticated:
+        return redirect(url_for("login.login"))
+
+    if not current_user.admin and not current_user.staff:
+        abort(403)
+
     form = EventForm()
     if form.validate_on_submit():
         event = Event(
@@ -38,6 +49,12 @@ def add_event():
 
 @admin_view.route("/portal/editorg", methods=["GET", "POST"])
 def edit_org():
+    if not current_user.is_authenticated:
+        return redirect(url_for("login.login"))
+
+    if not current_user.admin and not current_user.staff:
+        abort(403)
+
     org = Account.query.get(current_user.id)
     form = OrganizationForm(obj=org)
 
@@ -55,6 +72,12 @@ def edit_org():
 
 @admin_view.route("/portal/editevent/<id>", methods=["GET", "POST"])
 def edit_event(id):
+    if not current_user.is_authenticated:
+        return redirect(url_for("login.login"))
+
+    if not current_user.admin and not current_user.staff:
+        abort(403)
+
     event = find_event(id)
     form = EventForm(obj=event)
 
