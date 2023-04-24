@@ -8,7 +8,7 @@
                 {% if e.Category == category %}
                     <a href="{{ url_for('eventdetails', id=e['id']) }}">
                         <div class="contentBox">
-                            <img src={{ e.EventIcon }} class="boxPic"/>
+                            <img src={{ e.EventIcon }} class="eventImg"/>
                             <div class="boxDetails">
                                 <p class="boxName">{{ e.Name|text_limiter }}</p>
                                 <p class="orgName">{{ o|text_limiter(org=True) }}</p>

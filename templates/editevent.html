@@ -9,7 +9,7 @@
         </div>
     </div>
 
-    <form method = "POST" class="eventFormCard">
+    <form method = "POST" class="eventFormCard" enctype="multipart/form-data">
         {{ form.csrf_token }}
         <section class="boardbanner">
             <p>Edit Event</p>  
@@ -55,6 +55,20 @@
             {{ form.Category.label }}
             {{ form.Category }}
             {% for error in form.Category.errors %}
+                <span class="text-danger">{{ error }}</span><br>
+            {% endfor %}
+        </div>
+        <div class="eventFormCss">
+            {{ form.EventIcon.label }}
+            {{ form.EventIcon }}
+            {% for error in form.EventIcon.errors %}
+                <span class="text-danger">{{ error }}</span><br>
+            {% endfor %}
+        </div>
+        <div class="eventFormCss">
+            {{ form.EventBanner.label }}
+            {{ form.EventBanner }}
+            {% for error in form.EventIcon.errors %}
                 <span class="text-danger">{{ error }}</span><br>
             {% endfor %}
         </div>

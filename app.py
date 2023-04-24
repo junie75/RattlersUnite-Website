@@ -1,6 +1,6 @@
-from flask import Flask, redirect, render_template, url_for, session
+from flask import Flask, redirect, render_template, url_for, session, send_from_directory
 from datetime import datetime
-from models import db, Event, Account, StudentAccount, OrganizationAccount, AdminAccount
+from models import db, Event, Account, StudentAccount, OrganizationAccount
 from forms import (
     LoginForm,
     StudentSignUpForm,
@@ -8,7 +8,7 @@ from forms import (
     EventForm,
     OrganizationForm,
 )
-from globals import CATEGORIES
+from globals import CATEGORIES, APP_ROOT, UPLOAD_FOLDER, SECRET_KEY
 from flask_login import (
     LoginManager,
     login_required,
@@ -18,11 +18,17 @@ from flask_login import (
 )
 from flask_bcrypt import Bcrypt
 from sqlalchemy import func
+import os
+from PIL import Image
+from uuid import uuid4
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///../db/RattlersUnite2.db"
+
+app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{APP_ROOT}/db/RattlersUnite2.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.secret_key = "many random bytes"
+app.secret_key = SECRET_KEY
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -284,6 +290,30 @@ def logout():
 def portal():
     return render_template("orghome.html")
 
+def compress_image(img_path, quality=60):
+    img = Image.open(img_path)
+    if img.mode != "RGB":
+        img = img.convert("RGB")
+    img.save(img_path, optimize=True, quality=quality)
+
+def save_image(image, folder):
+    if image:
+        filename = secure_filename(str(uuid4()) + "_" + image.data.filename)
+        db_path = f"{folder}/{filename}"
+        full_path = os.path.join(app.config['UPLOAD_FOLDER'], db_path)
+        image.data.save(full_path)
+        compress_image(full_path)
+
+        return db_path
+    return None
+
+def clean_image_folder(old_image, banner=True):
+    if banner:
+        if old_image != f"../static/defaults/STMUlogo.png":
+            os.remove(old_image)
+    else:
+        if old_image != f"../static/defaults/STMUlogo.jpg":
+            os.remove(old_image)
 
 @app.route("/portal/addevent", methods=["GET", "POST"])
 def add_event():
@@ -297,6 +327,10 @@ def add_event():
             Description=form.Description.data,
             Category=form.Category.data,
         )
+
+        event.EventBanner = save_image(form.EventBanner, 'banners')
+        event.EventIcon = save_image(form.EventIcon, 'icons')
+
         db.session.add(event)
         db.session.commit()
         return redirect(url_for("portal"))
@@ -321,10 +355,38 @@ def edit_event(id):
     form = EventForm(obj=event)
 
     if form.validate_on_submit():
+        if form.EventBanner.data:
+            # Delete old banner file
+            clean_image_folder(event.EventBanner)
+            event.EventBanner = save_image(form.EventBanner, 'banners')
+
+        # Check if new icon was uploaded
+        if form.EventIcon.data:
+            # Delete old icon file
+            clean_image_folder(event.EventIcon, False)
+            event.EventIcon = save_image(form.EventIcon, 'icons')
+
         form.populate_obj(event)
         db.session.commit()
         return redirect(url_for("portal"))
     return render_template('editevent.html', form=form)
 
+@app.route('/uploads/<path:filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+def pre_start():
+    if not os.path.exists(UPLOAD_FOLDER):
+        os.makedirs(UPLOAD_FOLDER)
+    
+    banner_path = os.path.join(UPLOAD_FOLDER, "banners")
+    icon_path = os.path.join(UPLOAD_FOLDER, "icons")
+
+    if not os.path.exists(banner_path):
+        os.makedirs(banner_path)
+    if not os.path.exists(icon_path):
+        os.makedirs(icon_path)
+
 if __name__ == "__main__":
-    app.run(port=5001)
+    pre_start()
+    app.run()
