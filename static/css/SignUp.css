@@ -1,6 +1,6 @@
 body 
 {
-    background:url(OverheadView.jpg);
+    background:url(../defaults/OverheadView.jpg);
     font-family: "Roboto", sans-serif;
   }
   
@@ -9,7 +9,7 @@ body
     width: 360px;
     height: 620px;
     margin: auto;
-    background:url(PurpleTrans.jpg);
+    background:url(../defaults/PurpleTrans.jpg);
     border-radius: 3px;
   }
   

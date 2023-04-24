@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/base.css">
+    <title>Rattlers Unite!</title>
+</head>
+<body>
+    <div class="topnav" stylesheet="">
+        <a class="active" href="{{ url_for('main_view.main') }}">Home</a>
+        <a href="{{ url_for('main_view.events') }}">Events</a>
+        <a href="{{ url_for('main_view.organizations') }}">Organizations</a>
+        <a href="{{ url_for('main_view.leaderboards') }}">Leaderboard</a> 
+
+        <!--if user is not logged in display default login button-->
+        {% if current_user.is_authenticated %}
+            <div class="login">
+                <a href="{{ url_for('login.logout') }}">Logout</a>
+            </div>
+                
+            {% if current_user.staff %}
+                <div class="login">
+                    <a href="{{ url_for('admin.portal') }}">Org Portal</a>
+                </div>
+            {% endif %}
+            
+        <!--else display username and logout button-->
+        {% else %}
+            <div class="login">
+                <a href="{{ url_for('login.login') }}">Login</a>
+            </div>
+        {% endif %}
+
+        <div class="login">
+            {% if current_user.is_authenticated %}
+                <a class="active">
+                    Welcome {{ current_user.name }}!
+                </a>
+                {% if not current_user.staff %}
+                    <a>Points: {{ current_user.points }}</a>
+                {% endif %}
+            {% else %}
+                <a class="active">
+                    Welcome Guest!
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="container">
+        <img class="banner" src="../static/defaults/friendsHug.png"/>
+        <div class="centered">
+            <p class="welcome">
+                Welcome to Rattler's Unite!
+            </p>
+        </div>
+        <img src="../static/defaults/profilePic.png">
+    </div>
+
+    {% block content %} 
+    {% endblock %}
+
+    {% block category %} 
+    {% endblock %}
+
+    <footer>
+        <ul>
+            <p>Copyright © 2023 Rattlers Unite Team. All rights reserved.
+        </ul>
+    </footer>
+</body>
+</html>
+
