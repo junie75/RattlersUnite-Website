@@ -1,19 +1,19 @@
-{% extends 'categories.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
     <p class="title">Events with Category '{{ category }}'</p>
     <div class="gridmenu">
         {% if not noEvents %}
-            {% for post in events %}
-                {% if post['Category'] == category %}
-                    <a href="{{ url_for('eventdetails', id=post['ID']) }}">
+            {% for e, o in events %}
+                {% if e.Category == category %}
+                    <a href="{{ url_for('main_view.eventdetails', id=e['id']) }}">
                         <div class="contentBox">
-                            <img src={{ post['EventIcon'] }} class="boxPic"/>
+                            <img src={{ e.EventIcon }} class="eventImg"/>
                             <div class="boxDetails">
-                                <p class="boxName">{{ post['Name']|text_limiter }}</p>
-                                <p class="orgName">{{ post['Organization']|text_limiter(org=True) }}</p>
-                                <p class="eventTime">{{ post['StartDate']|format_datetime(post['EndDate']) }}</p>
-                                <p class="eventTime">Location: {{ post['Location'] }}</p>
+                                <p class="boxName">{{ e.Name|text_limiter }}</p>
+                                <p class="orgName">{{ o|text_limiter(org=True) }}</p>
+                                <p class="eventTime">{{ e.StartDate|format_datetime(e.EndDate) }}</p>
+                                <p class="eventTime">Location: {{ e.Location }}</p>
                             </div>
                         </div>
                     </a>
@@ -29,4 +29,6 @@
             </div>
         {% endif %}
     </div>
+
+    {% include 'modules/categories.html' %}
 {% endblock %}

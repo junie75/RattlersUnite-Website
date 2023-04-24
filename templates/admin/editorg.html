@@ -1,0 +1,34 @@
+{% extends 'admin/orgbase.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="centered">
+            <p class="welcome">
+                Rattler's Unite Organization Portal
+            </p>
+        </div>
+    </div>
+
+    <form method = "POST" class="leaderboardCard" enctype="multipart/form-data">
+        {{ form.csrf_token }}
+        <section class="boardbanner">
+            <p>Edit Organization Description</p>  
+        </section>
+        <div class="eventFormCss">
+            {{ form.about.label }}
+        </div>
+        <div class="eventFormCss">
+            {{ form.about }}
+        </div>
+        <div class="eventFormCss">
+            {{ form.icon.label }}
+            {{ form.icon }}
+            {% for error in form.icon.errors %}
+                <span class="text-danger">{{ error }}</span><br>
+            {% endfor %}
+        </div>
+        <div class="eventFormCss">
+            {{ form.submit }}
+        </div>
+    </form> 
+{% endblock %}
