@@ -8,11 +8,13 @@ from wtforms import (
     SelectField,
     PasswordField,
     DateTimeLocalField,
+    IntegerField,
 )
 from flask_wtf.file import FileAllowed
 from wtforms.validators import DataRequired, ValidationError
-from models import StudentAccount, OrganizationAccount, AdminAccount
+from models import StudentAccount, OrganizationAccount, AdminAccount, Account
 from globals import CATEGORIES
+from wtforms.widgets import TextInput
 
 
 # WTForms for login (Student/Organization)
@@ -121,7 +123,6 @@ class StudentSignUpForm(FlaskForm):
     def validate_username(self, username):
         user = StudentAccount.get_by_username(username.data)
         if user:
-            print("AAA")
             raise ValidationError("Username already exists.")
 
     def validate_confirm_password(form, field):
@@ -177,3 +178,17 @@ class AdminSignUpForm(FlaskForm):
     def validate_confirm_password(form, field):
         if form.password.data != field.data:
             raise ValidationError("Passwords do not match.")
+
+
+class PointForm(FlaskForm):
+    student_id = IntegerField("Student ID", validators=[DataRequired()], widget=TextInput())
+    points = IntegerField("Points to Assign", validators=[DataRequired()])
+
+    submit = SubmitField("Assign")
+
+    def validate_student_id(self, field):
+        user = Account.query.filter_by(id=field.data).first()
+        if user is None:
+            raise ValidationError("The ID provided does not exist.")
+        elif user.staff or user.admin:
+            raise ValidationError("Cannot assign points to an Organization/Admin account.")
