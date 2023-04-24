@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, url_for, session
+from flask import Flask, flash, redirect, render_template, request, url_for, session
 from datetime import datetime
 from models import db, Event, Account, StudentAccount, OrganizationAccount, AdminAccount
 from forms import (
@@ -325,6 +325,31 @@ def edit_event(id):
         db.session.commit()
         return redirect(url_for("portal"))
     return render_template('editevent.html', form=form)
+
+#Points Method
+@app.route("/add-points", methods=["GET", "POST"])
+@login_required
+def add_points(id):
+    event = find_event(id)
+
+    if request.method == "POST":
+        code = request.form.get("code")
+        if code == "12345":
+            start_time = event.StartDate
+            end_time = event.EndDate
+            time_diff = end_time - start_time
+            # Calculate points based on the length of the event
+            points = time_diff.seconds // 60
+
+            # Add points to the user's account
+            current_user.points += points
+            db.session.commit()
+            return redirect(url_for("main"), event = event)
+        else:
+            flash("Invalid code, please try again.", "error")
+            return render_template('eventPage.html', event = event)
+    
+
 
 if __name__ == "__main__":
     app.run(port=5001)
