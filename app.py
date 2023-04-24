@@ -314,6 +314,14 @@ def edit_org():
         return redirect(url_for("portal"))
     return render_template("editorg.html", form=form)
 
+#organization choose an event to edit/delete
+#event clicked should send event id to next method
+@app.route("/portal/eventtables")
+def event_tables():
+    orgID = current_user.id
+    events = list_org_events(current_user.id)
+    return render_template("eventTables.html", events=events, org = orgID)
+
 
 @app.route("/portal/editevent/<id>", methods=["GET", "POST"])
 def edit_event(id):

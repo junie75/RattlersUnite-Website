@@ -473,3 +473,64 @@ textarea {
     min-width: 500px;
     min-height: 150px;
 }
+
+/*edit the event tables*/
+.eventTable.title{
+    background-color:#a0c6e6;
+    color: white;
+    text-align: center;
+    font-size: 25px;
+    padding: 10px 0;
+}
+.eventTable{
+    table-layout: fixed;
+    width: 80%;
+    margin: auto;
+    border-collapse: collapse;
+    text-align: center;
+    background-color: rgb(232, 230, 230);
+    font-size: 15px;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    
+}
+
+.eventTable thead th:nth-child(1){
+    width: 25%;
+}
+
+.eventTable thead th:nth-child(2){
+    width: 18%;
+}
+
+.eventTable thead th:nth-child(3){
+    width: 22%;
+}
+
+.eventTable thead th:nth-child(4){
+    width: 35%;
+}
+
+.eventTable th,td{
+    padding: 15px 0;
+}
+
+.eventTable tbody tr:nth-child(odd){
+    background-color: rgb(218, 217, 217);
+}
+.eventTable tbody td:nth-child(4){
+    overflow: hidden;
+    white-space:nowrap;
+    text-overflow: ellipsis;
+}
+
+.eventTable tbody tr:hover{
+    background-color: rgb(197, 196, 196);
+}
+
+.eventTable p{
+    text-align: center;
+    font-size: 25px;
+    background-color: none;
+    color: white;
+}
+

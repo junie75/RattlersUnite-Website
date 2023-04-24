@@ -1,0 +1,61 @@
+{% extends 'orgbase.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="centered">
+        <p class="welcome">
+            Rattler's Unite Organization Portal
+        </p>
+    </div>
+</div>
+
+<!--{ if events }-->
+<p class="eventTable title"> Choose an event</p>
+<table class="eventTable">
+    <thead>
+        <tr>
+            <th scope="col">Event Name</th>
+            <th scope="col">Date</th>
+            <th scope="col">Location</th>
+            <th scope="col">Description</th>    
+        </tr>
+    </thead>
+    <tbody>
+        <!--{ for e in events }-->
+        {% for i in range(3) %}
+        <a>
+            <tr>
+                <td scope="row"><!--{{e['Name'|text_limiter]}}-->Research Showcase</td>
+                <td><!--{{ e['StartDate']|format_datetime(e['EndDate'])}}-->April 18th 9:00am-6:00pm</td>
+                <td><!--{{ e['Location']}}-->Greehey Arena</td>
+                <td><!--{{ e['Description'|text_limiter]}}-->Join us as we highlight and celebrate research,
+                     scholarly and creative works by St. Mary’s University faculty and students. 
+                     The theme of this year’s Research Showcase is... </td>
+            </tr>
+        </a>
+        <!--Can delete next two rows when connecting to db-->
+        <a>
+            <tr>
+                <td scope="row">Witness on Wednesday</td>
+                <td>April 14th 11:00am-2:00pm</td>
+                <td>University Center, Atrium Information Table 4</td>
+                <td>https://stmu.emscloudservice.com/calendar/EventDetails.aspx?EventDetailId=8548907</td>
+            </tr>
+        </a>
+        <a>
+            <tr>
+                <td scope="row">BSU Yoga Day</td>
+                <td>April 26th 2:00pm-3:00pm</td>
+                <td>St. Mary's University</td>
+                <td>Relax your mind before finals with a free stress-relieving yoga day led by a student instructor! Meet on the 2nd floor of the AACC at the movement studio near the racquetball court. Can't wait to see you all there!</td>
+            </tr>
+        </a>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!--{ else }-->
+<p class="eventTable">This organization currently has no active events.</p>
+<!--{ endif }-->
+
+{% endblock %}

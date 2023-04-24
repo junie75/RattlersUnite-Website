@@ -44,7 +44,7 @@
 <p id="orgPortalTitle">Welcome to the Rattler's Unite Organization Portal!</p>
 <div class="gridmenu orgPortal">
     <a href="{{ url_for('add_event') }}"><div class="contentBox orgPortal"><p>Add Event</p></div></a>
-    <a><div class="contentBox orgPortal"><p>Edit Event</p></div></a>
+    <a href="{{ url_for('event_tables')}}"><div class="contentBox orgPortal"><p>Edit Event</p></div></a>
     <a><div class="contentBox orgPortal"><p>Delete Event</p></div></a>
     <a href="{{ url_for('edit_org') }}"><div class="contentBox orgPortal"><p>Edit Profile</p></div></a>
 </div>
