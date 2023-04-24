@@ -494,6 +494,15 @@ textarea {
     
 }
 
+.eventTable a{
+    text-decoration: none;
+    color: black;
+}
+
+.eventTable a:visited{
+    color:black;
+}
+
 .eventTable thead th:nth-child(1){
     width: 25%;
 }
