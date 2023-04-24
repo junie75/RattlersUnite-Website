@@ -9,11 +9,11 @@
         </div>
     </div>
 
-    <form method = "POST" class="eventFormCard" enctype="multipart/form-data">
+    <form method="POST" class="eventFormCard">
         {{ form.csrf_token }}
         <section class="boardbanner">
-            <p>Assign Points</p>  
-        </section>    
+            <p>Assign Points</p>
+        </section>
         <div class="eventFormCss">
             {{ form.student_id.label }}
             {{ form.student_id }}
@@ -29,7 +29,7 @@
             {% endfor %}
         </div>
         <div class="eventFormCss">
-            {{ form.submit }}
+            {{ form.submit(class='btn btn-primary') }}
         </div>
     </form>
 {% endblock %}

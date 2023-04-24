@@ -110,6 +110,9 @@ def add_points():
     form = PointForm()
 
     if form.validate_on_submit():
-        # implement logic here
-        return redirect(url_for("admin.portal"))
+        account = Account.query.filter_by(id=form.student_id.data).first()
+        account.points = account.points + form.points.data
+        db.session.commit()
+        return redirect(url_for('admin.portal'))
+
     return render_template("admin/addPoints.html", form=form)
