@@ -4,7 +4,7 @@
     <div class="listmenu">
         <div class="eventCard">
             <div class="eventDiv">
-                <img src={{ event['EventBanner'] }} class="eventImg"/>
+                <img src={{ url_for('uploaded_file', filename=event['EventBanner']) }} alt="Event Banner" class="eventBannerImg"/>
                 <p class="eventTitleText">{{ event['Name'] }}</p>
                 <p class="eventInfoText">Event Dates: {{ event['StartDate']|format_datetime(event['EndDate']) }}</p>
                 <p class="eventInfoText">Location: {{ event['Location'] }}</p>
@@ -16,3 +16,4 @@
         </div>
     </div>
 {% endblock %}
+../uploads/icons/9dc67926-92e2-4873-9e05-f03f261943d1ChibiEi.png

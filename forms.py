@@ -9,10 +9,10 @@ from wtforms import (
     PasswordField,
     DateTimeLocalField,
 )
+from flask_wtf.file import FileAllowed
 from wtforms.validators import DataRequired, ValidationError
 from models import StudentAccount, OrganizationAccount, AdminAccount
 from globals import CATEGORIES
-
 
 # WTForms for login (Student/Organization)
 class LoginForm(FlaskForm):
@@ -42,6 +42,8 @@ class EventForm(FlaskForm):
     StartDate = DateTimeLocalField("Event Start Date/Time", format='%Y-%m-%dT%H:%M', validators=[DataRequired()])
     EndDate = DateTimeLocalField("Event End Date", format='%Y-%m-%dT%H:%M', validators=[DataRequired()])
     Description = TextAreaField("Event Description", validators=[DataRequired()])
+    EventIcon = FileField("Event Icon Image", validators=[FileAllowed(['jpg', 'png'], 'Only JPGs or PNGs are supported.')])
+    EventBanner = FileField("Event Banner Image", validators=[FileAllowed(['jpg', 'png'], 'Only JPGs or PNGs are supported.')])
 
     choiceList = [("", "Select a Category")]
     for c in CATEGORIES:

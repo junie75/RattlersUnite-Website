@@ -6,7 +6,7 @@
         {% for e, o in events %}
             <a href="{{ url_for('eventdetails', id=e['ID']) }}">
                 <div class="contentBox">
-                    <img src={{ e['EventIcon'] }} class="boxPic"/>
+                    <img src={{ url_for('uploaded_file', filename=e['EventIcon']) }} alt="Event Banner" class="eventImg"/>
                     <div class="boxDetails">
                         <p class="boxName">{{ e['Name']|text_limiter }}</p>
                         <p class="orgName">{{ o|text_limiter(org=True) }}</p>

@@ -7,7 +7,7 @@
             {% for e, o in events %}
             <a href="{{ url_for('eventdetails', id=e['ID']) }}">
                 <div class="contentBox">
-                    <img class="boxPic" src={{ e['EventIcon'] }}/>
+                    <img src={{ url_for('uploaded_file', filename=e['EventIcon']) }} class="eventImg">
                     <div class="boxDetails">
                         <p class="boxName">{{ e['Name']|text_limiter }}</p>
                         <p class="orgName">{{ o|text_limiter(org=True) }}</p>
@@ -34,7 +34,7 @@
             {% for o in organizations %}
                 <a href="{{ url_for('profiledetails', id=o['id']) }}">
                     <div class="contentBox">
-                        <img src={{ o.icon }} class="boxPic"/>
+                        <img src={{ o.icon }} class="eventImg"/>
                         <div class="boxDetails">
                             <p class="boxName">{{ o.name|text_limiter }}</p>
                         </div>
