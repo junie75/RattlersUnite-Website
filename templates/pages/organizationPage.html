@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="listmenu">
+        <div class="eventCard">
+            <div class="eventDiv">
+                <img src={{ url_for('uploaded_file', filename=org['icon']) }} class="eventImg"/>
+                <p class="eventTitleText">{{ org.name }}</p>
+                <p class="eventDescTitleText" style="text-align: left;">About the Organization</p>
+                <p class="eventTextMinor">{{ org.about }}</p>
+            </div>
+        </div>
+    </div>
+
+    <p class="title">Events made by this Organization</p>
+    {% include 'modules/eventsNoOrg.html' %}
+{% endblock %}

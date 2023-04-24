@@ -1,37 +1,24 @@
-from flask import Flask, redirect, render_template, url_for, session, send_from_directory
-from datetime import datetime
-from models import db, Event, Account, StudentAccount, OrganizationAccount
-from forms import (
-    LoginForm,
-    StudentSignUpForm,
-    OrganizationSignUpForm,
-    EventForm,
-    OrganizationForm,
-)
+from flask import Flask, send_from_directory
+from flask_login import LoginManager
+from models import db, Account
 from globals import CATEGORIES, APP_ROOT, UPLOAD_FOLDER, SECRET_KEY
-from flask_login import (
-    LoginManager,
-    login_required,
-    current_user,
-    login_user,
-    logout_user,
-)
 from flask_bcrypt import Bcrypt
-from sqlalchemy import func
 import os
-from PIL import Image
-from uuid import uuid4
-from werkzeug.utils import secure_filename
+from datetime import datetime
+
+from views import main_view
+from login import login_view
+from admin import admin_view
 
 app = Flask(__name__)
-
+app.register_blueprint(main_view)
+app.register_blueprint(login_view)
+app.register_blueprint(admin_view)
 app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{APP_ROOT}/db/RattlersUnite2.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = SECRET_KEY
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-login_manager = LoginManager()
-login_manager.init_app(app)
+app.jinja_env.globals.update(CATEGORIES=CATEGORIES)
 
 bcrypt = Bcrypt(app)
 
@@ -39,8 +26,9 @@ db.init_app(app)
 
 with app.app_context():
     db.create_all()
-    # make_db()
 
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(user_id: int):
@@ -48,119 +36,6 @@ def load_user(user_id: int):
     if user:
         return user
     return None
-
-
-app.jinja_env.globals.update(CATEGORIES=CATEGORIES)
-
-
-@app.template_filter()
-def text_limiter(text: str, org=False):
-    if not org:
-        if len(text) > 32:
-            return text[:32] + "..."
-        return text
-    else:
-        if len(text) > 34:
-            return text[:34] + "..."
-        return text
-
-
-def fetch_events(amnt: int = None):
-    """
-    This function fetches every event and its' information in the
-    Events table.
-
-    :param amnt: The amount of events we should fetch at random.
-    """
-    now = datetime.now()
-    query = (
-        db.session.query(Event, OrganizationAccount.name)
-        .join(OrganizationAccount)
-        .filter(Event.Organization == OrganizationAccount.id)
-    )
-    query = query.filter(Event.EndDate > now)
-
-    if amnt:
-        # Only return 5 random events that have not ended.
-        return query.order_by(func.random()).limit(amnt).all()
-
-    # Return all random events that have not ended.
-    return query.order_by(Event.StartDate).all()
-
-
-def fetch_organizations(amnt: int = None):
-    """
-    This function fetches the name and ID of every school organization in the
-    Organizations table.
-
-    :param amnt: The amount of events we should fetch at random.
-    """
-
-    if amnt:
-        # Only return X random orgs
-        return (
-            Account.query.filter_by(staff=True)
-            .filter_by(admin=False)
-            .order_by(func.random())
-            .limit(amnt)
-            .all()
-        )
-
-    # Return all random events that have not ended.
-    return Account.query.filter_by(staff=True).filter_by(admin=False).all()
-
-
-def fetch_leaderboards():
-    """
-    This function grabs the name and points of every student in the
-    Student table.
-    """
-    return db.session.query(Account.name, Account.points).filter_by(staff=False).order_by(Account.points.desc()).all()
-
-
-def find_event(id: int):
-    """
-    This function grabs the event information of a specific event.
-
-    :param id: The ID of the event to look for.
-    """
-    return Event.query.filter_by(ID=id).first()
-
-
-def find_profile(id):
-    """
-    This function grabs the profile information of a specific user/organization.
-
-    :param id: The ID of the organization to look for.
-    """
-    return Account.query.filter_by(id=id).first()
-
-
-def list_org_events(org_id):
-    """
-    This function grabs all the events that a specific organization is hosting.
-
-    :param org_id: The ID of the organization we want events from.
-    """
-    now = datetime.now()
-    query = db.session.query(Event)
-    query = query.filter(Event.EndDate > now)
-    query = query.filter(Event.Organization == org_id)
-
-    # We will return only events that are after the current local time.
-    return query.all()
-
-
-def fetch_organization(org_id: int):
-    """
-    This function fetches all of the information of one organization based off their
-    ID number.
-
-    :param org_id: The ID of the organization to fetch data from.
-    """
-    temp = Account.query.filter_by(id=org_id).first()
-    return temp
-
 
 ## Filter Functions
 @app.template_filter()
@@ -178,202 +53,20 @@ def format_datetime(start: datetime, end: datetime):
         endStr = datetime.strftime(end, " to %b %d - %I:%M%p CT")
     return startStr + endStr
 
-
-## Site Functions
-@app.route("/")
-def main():
-    events = fetch_events(amnt=5)
-    orgs = fetch_organizations(amnt=5)
-    # added username if it is in session, unknown if it is not
-    return render_template("home.html", events=events, organizations=orgs)
-
-
-@app.route("/events")
-def events():
-    events = fetch_events()
-    return render_template("events.html", events=events)
-
-
-@app.route("/organizations")
-def organizations():
-    orgs = fetch_organizations()
-    return render_template("organizations.html", organizations=orgs)
-
-
-@app.route("/leaderboards")
-def leaderboards():
-    board = fetch_leaderboards()
-    print(board)
-    return render_template("leaderboards.html", board=board)
-
-
-@app.route("/search/<category>")
-def search(category):
-    events = fetch_events()
-
-    # Crappy for loop check for empty categories but it does it's job IG
-    noEvents = True
-    for e, o in events:
-        if e.Category == category:
-            noEvents = False
-            break
-
-    return render_template(
-        "search.html", events=events, category=category, noEvents=noEvents
-    )
-
-
-@app.route("/eventdetails/<id>")
-def eventdetails(id):
-    event = find_event(id)
-    return render_template("eventPage.html", event=event)
-
-
-@app.route("/profile/<id>")
-def profiledetails(id, org=True):
-    if org:
-        org = find_profile(id)
-        events = list_org_events(id)
-        return render_template("organizationPage.html", org=org, events=events)
-
-
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    if current_user.is_authenticated:
-        return redirect(url_for("main"))
-
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = Account.query.filter_by(username=form.username.data).first()
-        if user and user.check_password(form.password.data):
-            login_user(user)
-            return redirect(url_for("main"))
-        else:
-            return render_template("LogIn.html", error=True, form=form)
-    return render_template("LogIn.html", form=form)
-
-
-@app.route("/signup", methods=["GET", "POST"])
-def signup():
-    form = StudentSignUpForm()
-    if form.validate_on_submit():
-        user = StudentAccount(name=form.name.data, username=form.username.data)
-        user.set_password(form.password.data)
-        db.session.add(user)
-        db.session.commit()
-        return redirect(url_for("login"))
-    return render_template("SignUp.html", form=form)
-
-
-@app.route("/orgsignup", methods=["GET", "POST"])
-def orgsignup():
-    form = OrganizationSignUpForm()
-    if form.validate_on_submit():
-        user = OrganizationAccount(name=form.name.data, username=form.username.data)
-        user.set_password(form.password.data)
-        db.session.add(user)
-        db.session.commit()
-        return redirect(url_for("login"))
-    return render_template("OrgSignUp.html", form=form)
-
-
-@app.route("/logout")
-def logout():
-    if current_user.is_authenticated:
-        logout_user()
-        session.clear()
-    return redirect(url_for("main"))
-
-
-@app.route("/portal")
-@login_required
-def portal():
-    return render_template("orghome.html")
-
-def compress_image(img_path, quality=60):
-    img = Image.open(img_path)
-    if img.mode != "RGB":
-        img = img.convert("RGB")
-    img.save(img_path, optimize=True, quality=quality)
-
-def save_image(image, folder):
-    if image:
-        filename = secure_filename(str(uuid4()) + "_" + image.data.filename)
-        db_path = f"{folder}/{filename}"
-        full_path = os.path.join(app.config['UPLOAD_FOLDER'], db_path)
-        image.data.save(full_path)
-        compress_image(full_path)
-
-        return db_path
-    return None
-
-def clean_image_folder(old_image, banner=True):
-    if banner:
-        if old_image != f"../static/defaults/STMUlogo.png":
-            os.remove(old_image)
-    else:
-        if old_image != f"../static/defaults/STMUlogo.jpg":
-            os.remove(old_image)
-
-@app.route("/portal/addevent", methods=["GET", "POST"])
-def add_event():
-    form = EventForm()
-    if form.validate_on_submit():
-        event = Event(
-            Name=form.Name.data,
-            Organization=current_user.id,
-            StartDate=form.StartDate.data,
-            EndDate=form.EndDate.data,
-            Description=form.Description.data,
-            Category=form.Category.data,
-        )
-
-        event.EventBanner = save_image(form.EventBanner, 'banners')
-        event.EventIcon = save_image(form.EventIcon, 'icons')
-
-        db.session.add(event)
-        db.session.commit()
-        return redirect(url_for("portal"))
-    return render_template("addevent.html", form=form)
-
-
-@app.route("/portal/editorg", methods=["GET", "POST"])
-def edit_org():
-    org = Account.query.get(current_user.id)
-    form = OrganizationForm(obj=org)
-    form.populate_obj(org)
-    if form.validate_on_submit():
-        form.populate_obj(org)
-        db.session.commit()
-        return redirect(url_for("portal"))
-    return render_template("editorg.html", form=form)
-
-
-@app.route("/portal/editevent/<id>", methods=["GET", "POST"])
-def edit_event(id):
-    event = find_event(id)
-    form = EventForm(obj=event)
-
-    if form.validate_on_submit():
-        if form.EventBanner.data:
-            # Delete old banner file
-            clean_image_folder(event.EventBanner)
-            event.EventBanner = save_image(form.EventBanner, 'banners')
-
-        # Check if new icon was uploaded
-        if form.EventIcon.data:
-            # Delete old icon file
-            clean_image_folder(event.EventIcon, False)
-            event.EventIcon = save_image(form.EventIcon, 'icons')
-
-        form.populate_obj(event)
-        db.session.commit()
-        return redirect(url_for("portal"))
-    return render_template('editevent.html', form=form)
-
 @app.route('/uploads/<path:filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+@app.template_filter()
+def text_limiter(text: str, org=False):
+    if not org:
+        if len(text) > 32:
+            return text[:32] + "..."
+        return text
+    else:
+        if len(text) > 34:
+            return text[:34] + "..."
+        return text
 
 def pre_start():
     if not os.path.exists(UPLOAD_FOLDER):
@@ -381,11 +74,14 @@ def pre_start():
     
     banner_path = os.path.join(UPLOAD_FOLDER, "banners")
     icon_path = os.path.join(UPLOAD_FOLDER, "icons")
+    profile_path = os.path.join(UPLOAD_FOLDER, "profile_icons")
 
     if not os.path.exists(banner_path):
         os.makedirs(banner_path)
     if not os.path.exists(icon_path):
         os.makedirs(icon_path)
+    if not os.path.exists(profile_path):
+        os.makedirs(profile_path)
 
 if __name__ == "__main__":
     pre_start()

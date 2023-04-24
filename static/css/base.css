@@ -167,9 +167,11 @@ div.gridmenu a {
 #orgPortalTitle{
     position: absolute;
     color: white;
-    top:200px;
-    left: 16%;
+    width:fit-content;
+    margin: auto;
     font-size: 40px;
+    top: 200px;
+    left: 200px;
 }
 
 /* Event/Organization Boxes */
@@ -472,4 +474,118 @@ footer p{
 textarea {
     min-width: 500px;
     min-height: 150px;
+}
+
+/*edit the event tables*/
+.eventTable.title{
+    background-color:#a0c6e6;
+    color: white;
+    text-align: center;
+    font-size: 25px;
+    padding: 10px 0;
+}
+.eventTable{
+    table-layout: fixed;
+    width: 80%;
+    margin: auto;
+    border-collapse: collapse;
+    text-align: center;
+    background-color: rgb(232, 230, 230);
+    font-size: 15px;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    
+}
+
+.eventTable a{
+    text-decoration: none;
+    color: black;
+}
+
+.eventTable a:visited{
+    color:black;
+}
+
+.eventTable thead th:nth-child(1){
+    width: 25%;
+}
+
+.eventTable thead th:nth-child(2){
+    width: 18%;
+}
+
+.eventTable thead th:nth-child(3){
+    width: 22%;
+}
+
+.eventTable thead th:nth-child(4){
+    width: 35%;
+}
+
+.eventTable th,td{
+    padding: 15px 0;
+}
+
+.eventTable tbody tr:nth-child(odd){
+    background-color: rgb(218, 217, 217);
+}
+.eventTable tbody td:nth-child(4){
+    overflow: hidden;
+    white-space:nowrap;
+    text-overflow: ellipsis;
+}
+
+.eventTable tbody tr:hover{
+    background-color: rgb(197, 196, 196);
+}
+
+.eventTable p{
+    text-align: center;
+    font-size: 25px;
+    background-color: none;
+    color: white;
+}
+
+/*delete event confirmation page css*/
+
+.delconfirm.message{
+    width: fit-content;
+    margin: auto;
+    margin-top: -60px;
+    position: relative;
+    justify-content: center;
+    text-align: center;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    background-color:#3361d48c;
+    background-color:#2d5dd2;
+    padding: 40px;
+    border-radius: 15px;
+}
+.delconfirm.prompt{
+    color: whitesmoke;
+    font-size: 25px;
+    width: fit-content; 
+    margin-bottom: 30px;
+}
+
+.delconfirm.button{
+    width: 60px;
+    width:min-content;
+    display: inline;
+    margin: 40px 15px;
+    font-size: 20px;
+    border: none;
+    background-color:#4b77e5;
+    border-radius: 10px;
+    color: white;
+    padding: 10px;
+    text-decoration: none;
+}
+
+
+.delconfirm.button:hover{
+    background-color:#4b77e583;
+}
+
+.delconfirm.button:active{
+    background-color: #4b77e5;
 }

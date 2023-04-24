@@ -7,3 +7,4 @@ flask_login
 flask_bcrypt
 wtforms
 sqlalchemy
+Pillow
