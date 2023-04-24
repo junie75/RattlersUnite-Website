@@ -1,7 +1,7 @@
 from flask import render_template, Blueprint, redirect, url_for, abort
 from core import save_image, clean_image_folder
 from views import find_event
-from flask_login import login_required, current_user
+from flask_login import current_user
 from forms import EventForm, OrganizationForm
 from models import Event, Account, db
 
