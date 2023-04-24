@@ -1,10 +1,9 @@
-
 from flask import render_template, Blueprint
 from models import Event, Account, OrganizationAccount, db
 from datetime import datetime
 from sqlalchemy import func
 
-main_view = Blueprint('main_view', __name__)
+main_view = Blueprint("main_view", __name__)
 
 
 def fetch_events(amnt: int = None):
@@ -57,7 +56,12 @@ def fetch_leaderboards():
     This function grabs the name and points of every student in the
     Student table.
     """
-    return db.session.query(Account.name, Account.points).filter_by(staff=False).order_by(Account.points.desc()).all()
+    return (
+        db.session.query(Account.name, Account.points)
+        .filter_by(staff=False)
+        .order_by(Account.points.desc())
+        .all()
+    )
 
 
 def find_event(id: int):
@@ -102,6 +106,7 @@ def fetch_organization(org_id: int):
     """
     temp = Account.query.filter_by(id=org_id).first()
     return temp
+
 
 ## Site Functions
 @main_view.route("/")

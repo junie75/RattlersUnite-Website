@@ -3,7 +3,7 @@ from models import Account, OrganizationAccount, db, StudentAccount
 from flask_login import current_user, login_user, logout_user
 from forms import LoginForm, StudentSignUpForm, OrganizationSignUpForm
 
-login_view = Blueprint('login', __name__)
+login_view = Blueprint("login", __name__)
 
 
 @login_view.route("/login", methods=["GET", "POST"])

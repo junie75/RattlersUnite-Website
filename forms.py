@@ -14,6 +14,7 @@ from wtforms.validators import DataRequired, ValidationError
 from models import StudentAccount, OrganizationAccount, AdminAccount
 from globals import CATEGORIES
 
+
 # WTForms for login (Student/Organization)
 class LoginForm(FlaskForm):
     username = StringField(
@@ -39,19 +40,27 @@ class AdminLoginForm(FlaskForm):
 class EventForm(FlaskForm):
     Name = StringField("Event Name", validators=[DataRequired()])
     Location = StringField("Event Location", validators=[DataRequired()])
-    StartDate = DateTimeLocalField("Event Start Date/Time", format='%Y-%m-%dT%H:%M', validators=[DataRequired()])
-    EndDate = DateTimeLocalField("Event End Date", format='%Y-%m-%dT%H:%M', validators=[DataRequired()])
+    StartDate = DateTimeLocalField(
+        "Event Start Date/Time", format="%Y-%m-%dT%H:%M", validators=[DataRequired()]
+    )
+    EndDate = DateTimeLocalField(
+        "Event End Date", format="%Y-%m-%dT%H:%M", validators=[DataRequired()]
+    )
     Description = TextAreaField("Event Description", validators=[DataRequired()])
-    EventIcon = FileField("Event Icon Image", validators=[FileAllowed(['jpg', 'png'], 'Only JPGs or PNGs are supported.')])
-    EventBanner = FileField("Event Banner Image", validators=[FileAllowed(['jpg', 'png'], 'Only JPGs or PNGs are supported.')])
+    EventIcon = FileField(
+        "Event Icon Image",
+        validators=[FileAllowed(["jpg", "png"], "Only JPGs or PNGs are supported.")],
+    )
+    EventBanner = FileField(
+        "Event Banner Image",
+        validators=[FileAllowed(["jpg", "png"], "Only JPGs or PNGs are supported.")],
+    )
 
     choiceList = [("", "Select a Category")]
     for c in CATEGORIES:
         choiceList.append(c)
 
-    Category = SelectField(
-        "Category", validators=[DataRequired()], choices=choiceList
-    )
+    Category = SelectField("Category", validators=[DataRequired()], choices=choiceList)
 
     submit = SubmitField("Submit")
 
@@ -60,11 +69,11 @@ class EventForm(FlaskForm):
             return False
 
         if self.EndDate.data < self.StartDate.data:
-            self.EndDate.errors.append('End Date must be greater than Start Date')
+            self.EndDate.errors.append("End Date must be greater than Start Date")
             return False
 
         return True
-    
+
     def populate_obj(self, obj, ignore=[]):
         """
         Populates the attributes of the passed `obj` with data from the form's
@@ -74,15 +83,17 @@ class EventForm(FlaskForm):
             if name not in ignore:
                 field.populate_obj(obj, name)
 
+
 # Form for Organization Description Editing
 class OrganizationForm(FlaskForm):
-    about = TextAreaField(
-        "Organization Description", validators=[DataRequired()]
+    about = TextAreaField("Organization Description", validators=[DataRequired()])
+    icon = FileField(
+        "Profile Image",
+        validators=[FileAllowed(["jpg", "png"], "Only JPGs or PNGs are supported.")],
     )
-    icon = FileField("Profile Image", validators=[FileAllowed(['jpg', 'png'], 'Only JPGs or PNGs are supported.')])
     submit = SubmitField("Submit")
 
-    def populate_obj(self, obj, ignore=['icon']):
+    def populate_obj(self, obj, ignore=["icon"]):
         """
         Populates the attributes of the passed `obj` with data from the form's
         fields, ignoring disabled fields.

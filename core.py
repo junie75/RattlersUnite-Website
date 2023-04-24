@@ -4,11 +4,13 @@ from werkzeug.utils import secure_filename
 import os
 from globals import UPLOAD_FOLDER
 
+
 def compress_image(img_path, quality=60):
     img = Image.open(img_path)
     if img.mode != "RGB":
         img = img.convert("RGB")
     img.save(img_path, optimize=True, quality=quality)
+
 
 def save_image(image, folder):
     if image:
@@ -21,10 +23,11 @@ def save_image(image, folder):
         return db_path
     return None
 
+
 def clean_image_folder(old_image, banner=True):
     if banner:
         if old_image != f"../static/defaults/STMUlogo.png":
-            os.remove(f'uploads/{old_image}')
+            os.remove(f"uploads/{old_image}")
     else:
         if old_image != f"../static/defaults/STMUlogo.jpg":
-            os.remove(f'uploads/{old_image}')
+            os.remove(f"uploads/{old_image}")
