@@ -1,0 +1,17 @@
+{% extends 'admin/orgbase.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="centered">
+            <p class="welcome">
+                Rattler's Unite Organization Portal
+            </p>
+        </div>
+    </div>
+
+    <div class="delconfirm message">
+        <p class="delconfirm prompt">Are you sure you want to delete {{event['Name']}} ?</p>
+        <a href="{{url_for('admin.delete_event', id=event['ID'])}}" class="delconfirm button">Yes</a>
+        <a href="{{url_for('admin.portal')}}" class="delconfirm button">Cancel</a>
+    </div>
+{% endblock %}

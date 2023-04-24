@@ -1,6 +1,6 @@
 from flask import render_template, Blueprint, redirect, url_for, abort
 from core import save_image, clean_image_folder
-from views import find_event
+from views import find_event, list_org_events
 from flask_login import current_user
 from forms import EventForm, OrganizationForm
 from models import Event, Account, db
@@ -97,3 +97,23 @@ def edit_event(id):
         db.session.commit()
         return redirect(url_for("admin.portal"))
     return render_template("admin/editevent.html", form=form)
+
+#org chooses which event and the method (ie. edit or delete) is sent from whatever button is clicked
+@admin_view.route("/portal/eventtables/<method>")
+def event_tables(method):
+    orgID = current_user.id
+    events = list_org_events(current_user.id)
+    return render_template("admin/eventTables.html", events=events, org = orgID, method=method)
+
+@admin_view.route("/portal/deleteevent/<id>")
+def delete_event(id):
+    event = find_event(id)
+    db.session.delete(event)
+    db.session.commit()
+    return redirect(url_for("admin.portal"))
+
+#confirm if org wants to delete event
+@admin_view.route("/portal/deleteConfirmation/<id>")
+def delete_confirm(id):
+    event = find_event(id)
+    return render_template('admin/deleteconfirm.html', event=event)

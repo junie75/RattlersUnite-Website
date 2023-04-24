@@ -1,11 +1,12 @@
 {% extends 'admin/orgbase.html' %}
 
 {% block content %}
-    <p id="orgPortalTitle">Welcome to the Rattler's Unite Organization Portal!</p>
+    
     <div class="gridmenu orgPortal">
+        <p id="orgPortalTitle">Welcome to the Rattler's Unite Organization Portal!</p>
         <a href="{{ url_for('admin.add_event') }}"><div class="contentBox orgPortal"><p>Add Event</p></div></a>
-        <a><div class="contentBox orgPortal"><p>Edit Event</p></div></a>
-        <a><div class="contentBox orgPortal"><p>Delete Event</p></div></a>
+        <a href="{{ url_for('admin.event_tables', method='edit')}}"><div class="contentBox orgPortal"><p>Edit Event</p></div></a>
+        <a href="{{ url_for('admin.event_tables', method='delete')}}"><div class="contentBox orgPortal"><p>Delete Event</p></div></a>
         <a href="{{ url_for('admin.edit_org') }}"><div class="contentBox orgPortal"><p>Edit Profile</p></div></a>
     </div>
 {% endblock %}
