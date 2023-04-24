@@ -2,7 +2,7 @@ from flask import render_template, Blueprint, redirect, url_for, abort
 from core import save_image, clean_image_folder
 from views import find_event
 from flask_login import current_user
-from forms import EventForm, OrganizationForm
+from forms import EventForm, OrganizationForm, PointForm
 from models import Event, Account, db
 
 admin_view = Blueprint("admin", __name__)
@@ -97,3 +97,19 @@ def edit_event(id):
         db.session.commit()
         return redirect(url_for("admin.portal"))
     return render_template("admin/editevent.html", form=form)
+
+
+@admin_view.route("/portal/addpoints", methods=["GET", "POST"])
+def add_points():
+    if not current_user.is_authenticated:
+        return redirect(url_for("login.login"))
+
+    if not current_user.admin and not current_user.staff:
+        abort(403)
+
+    form = PointForm()
+
+    if form.validate_on_submit():
+        # implement logic here
+        return redirect(url_for("admin.portal"))
+    return render_template("admin/addPoints.html", form=form)
