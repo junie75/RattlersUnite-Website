@@ -38,8 +38,10 @@ def add_event():
             Category=form.Category.data,
         )
 
-        event.EventBanner = save_image(form.EventBanner, "banners")
-        event.EventIcon = save_image(form.EventIcon, "icons")
+        if form.EventBanner.data:
+            event.EventBanner = save_image(form.EventBanner, "banners")
+        if form.EventIcon.data:
+            event.EventIcon = save_image(form.EventIcon, "icons")
 
         db.session.add(event)
         db.session.commit()
