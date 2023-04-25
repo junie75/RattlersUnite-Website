@@ -118,19 +118,22 @@ def add_points():
             account.points = 0
         else:
             account.points = new_points
-            
+
         db.session.commit()
-        return redirect(url_for('admin.portal'))
+        return redirect(url_for("admin.portal"))
 
     return render_template("admin/addPoints.html", form=form)
 
 
-#org chooses which event and the method (ie. edit or delete) is sent from whatever button is clicked
+# org chooses which event and the method (ie. edit or delete) is sent from whatever button is clicked
 @admin_view.route("/portal/eventtables/<method>")
 def event_tables(method):
     orgID = current_user.id
     events = list_org_events(current_user.id)
-    return render_template("admin/eventTables.html", events=events, org = orgID, method=method)
+    return render_template(
+        "admin/eventTables.html", events=events, org=orgID, method=method
+    )
+
 
 @admin_view.route("/portal/deleteevent/<id>")
 def delete_event(id):
@@ -139,8 +142,9 @@ def delete_event(id):
     db.session.commit()
     return redirect(url_for("admin.portal"))
 
-#confirm if org wants to delete event
+
+# confirm if org wants to delete event
 @admin_view.route("/portal/deleteConfirmation/<id>")
 def delete_confirm(id):
     event = find_event(id)
-    return render_template('admin/deleteconfirm.html', event=event)
+    return render_template("admin/deleteconfirm.html", event=event)

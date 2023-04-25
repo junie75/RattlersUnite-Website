@@ -181,7 +181,9 @@ class AdminSignUpForm(FlaskForm):
 
 
 class PointForm(FlaskForm):
-    student_id = IntegerField("Student ID", validators=[DataRequired()], widget=TextInput())
+    student_id = IntegerField(
+        "Student ID", validators=[DataRequired()], widget=TextInput()
+    )
     points = IntegerField("Points to Assign", validators=[DataRequired()])
 
     submit = SubmitField("Assign")
@@ -191,4 +193,6 @@ class PointForm(FlaskForm):
         if user is None:
             raise ValidationError("The ID provided does not exist.")
         elif user.staff or user.admin:
-            raise ValidationError("Cannot assign points to an Organization/Admin account.")
+            raise ValidationError(
+                "Cannot assign points to an Organization/Admin account."
+            )
