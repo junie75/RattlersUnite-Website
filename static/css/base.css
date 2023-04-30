@@ -134,7 +134,7 @@ div.gridmenu a {
     overflow-x: visible;
     margin: auto;
     margin-top: 200px;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
 }
 
 .gridmenu.orgPortal a{
