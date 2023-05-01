@@ -1,11 +1,15 @@
-from flask import render_template, Blueprint, redirect, url_for, abort
+from flask import flash, render_template, Blueprint, redirect, url_for, abort
 from core import save_image, clean_image_folder
 from views import find_event, list_org_events
 from flask_login import current_user
 from forms import EventForm, OrganizationForm, PointForm
 from models import Event, Account, db
+import datetime
 
 admin_view = Blueprint("admin", __name__)
+
+import sqlite3
+
 
 
 @admin_view.route("/portal")
@@ -121,10 +125,14 @@ def add_points():
         else:
             account.points = new_points
 
+        # Update the amount of points rewarded by the current user
+        current_user.points += form.points.data
         db.session.commit()
+        log_points(account.id, form.points.data)
+        flash("Points added successfully!", "success")
         return redirect(url_for("admin.portal"))
 
-    return render_template("admin/addPoints.html", form=form)
+    return render_template("admin/addpoints.html", form=form)
 
 
 # org chooses which event and the method (ie. edit or delete) is sent from whatever button is clicked
@@ -150,3 +158,8 @@ def delete_event(id):
 def delete_confirm(id):
     event = find_event(id)
     return render_template("admin/deleteconfirm.html", event=event)
+
+def log_points(name, points):
+    current_time = datetime.datetime.now()
+    with open('point_logs.txt', 'a') as file:
+        file.write(f"{current_time} - Account {current_user.name} gave {points} points to Account {name}\n")

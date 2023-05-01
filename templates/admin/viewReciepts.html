@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>View Points</h1>
+  <p>Total Points: {{ total_points }}</p>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Account Name</th>
+        <th>Points</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for account in accounts %}
+        <tr>
+          <td>{{ account.name }}</td>
+          <td>{{ account.points }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
