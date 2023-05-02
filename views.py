@@ -135,6 +135,9 @@ def leaderboards():
     print(board)
     return render_template("sections/leaderboards.html", board=board)
 
+@main_view.route("/prizes")
+def prizes():
+    return render_template("sections/prizes.html")
 
 @main_view.route("/search/<category>")
 def search(category):
