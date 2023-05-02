@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from flask_bcrypt import generate_password_hash, check_password_hash
+
 db = SQLAlchemy()
 
 
@@ -61,5 +62,3 @@ class OrganizationAccount(Account):
 class AdminAccount(Account):
     def __init__(self, **properties):
         super().__init__(**properties, staff=True, admin=True)
-
-
