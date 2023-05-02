@@ -223,11 +223,10 @@ div.gridmenu a {
 #orgPortalTitle{
     position: absolute;
     color: white;
-    width:fit-content;
-    margin: auto;
+    width: fit-content;
     font-size: 40px;
-    top: 200px;
-    left: 200px;
+    top: 17%;
+    left: 27%;
 }
 
 /* Event/Organization Boxes */

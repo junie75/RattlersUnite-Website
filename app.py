@@ -77,16 +77,9 @@ def pre_start():
     if not os.path.exists(UPLOAD_FOLDER):
         os.makedirs(UPLOAD_FOLDER)
 
-    banner_path = os.path.join(UPLOAD_FOLDER, "banners")
-    icon_path = os.path.join(UPLOAD_FOLDER, "icons")
-    profile_path = os.path.join(UPLOAD_FOLDER, "profile_icons")
-
-    if not os.path.exists(banner_path):
-        os.makedirs(banner_path)
-    if not os.path.exists(icon_path):
-        os.makedirs(icon_path)
-    if not os.path.exists(profile_path):
-        os.makedirs(profile_path)
+    for f in ["banners", "icons", "profile_icons"]:
+        if not os.path.exists(os.path.join(UPLOAD_FOLDER, f)):
+            os.makedirs(os.path.join(UPLOAD_FOLDER, f))
 
 
 if __name__ == "__main__":
