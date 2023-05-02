@@ -134,13 +134,70 @@ div.gridmenu a {
     overflow-x: visible;
     margin: auto;
     margin-top: 200px;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
 }
 
 .gridmenu.orgPortal a{
     margin-left: auto;
 }
 
+
+/*prizes page*/
+
+.prizes.intro{
+    margin-top:30px;
+    height: 80px;
+    text-align: center;
+}
+.prizes.title{
+    color: rgb(255, 200, 0);
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 40px;
+}
+.prizes.info{
+    width: 400px;
+    color:#fffefed2;
+    margin:auto;
+    line-height: 1.4em;
+    padding-top: 15px;
+}
+
+/* modified grid menu for prizes page */
+.gridmenu.prizes{
+    overflow-x: visible;
+    margin: auto;
+    margin-top: 140px;
+    margin-bottom: 100px;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.prizebox{
+    position: relative;
+    min-width: 150px;
+    max-width: 150px;
+    min-height: 150px;
+    max-height: 150px;
+    text-align: center;
+    margin: 50px 70px;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color: rgba(255, 255, 255, 0.943);
+    text-shadow: 1px 1px black;
+}
+
+.prize{
+    height:fit-content;
+    width:fit-content;
+    padding: 15px;
+}
+
+.prizelabel{
+    font-size: 23px;
+}
+
+.prizepoints{
+    font-size: 15px;
+    padding-top: 8px;
+}
 /* modified content boxes for org portal*/
 .contentBox.orgPortal{
     border: 1px solid black;
@@ -153,7 +210,6 @@ div.gridmenu a {
     max-height: 110px;
     border-radius: 10px;
     text-align: center;
-    position:relative;
     margin: 30px;
     font-size: 23px;
     font-weight: bold;

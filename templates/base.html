@@ -13,6 +13,7 @@
         <a href="{{ url_for('main_view.events') }}">Events</a>
         <a href="{{ url_for('main_view.organizations') }}">Organizations</a>
         <a href="{{ url_for('main_view.leaderboards') }}">Leaderboard</a> 
+        <a href="{{ url_for('main_view.prizes') }}">Prizes</a>
 
         <!--if user is not logged in display default login button-->
         {% if current_user.is_authenticated %}
