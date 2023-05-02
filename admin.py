@@ -8,9 +8,6 @@ import datetime
 
 admin_view = Blueprint("admin", __name__)
 
-import sqlite3
-
-
 
 @admin_view.route("/portal")
 def portal():
@@ -159,7 +156,10 @@ def delete_confirm(id):
     event = find_event(id)
     return render_template("admin/deleteconfirm.html", event=event)
 
+
 def log_points(name, points):
     current_time = datetime.datetime.now()
-    with open('point_logs.txt', 'a') as file:
-        file.write(f"{current_time} - Account {current_user.name} gave {points} points to Account {name}\n")
+    with open("point_logs.txt", "a") as file:
+        file.write(
+            f"{current_time} - Account {current_user.name} gave {points} points to Account {name}\n"
+        )
