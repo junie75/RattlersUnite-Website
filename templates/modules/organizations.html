@@ -4,8 +4,8 @@
             <a href="{{ url_for('main_view.profiledetails', id=o['id']) }}">
                 <div class="contentBox">
                     <img src={{ url_for('uploaded_file', filename=o['icon']) }} class="eventImg"/>
-                    <div class="boxDetails">
-                        <p class="boxName">{{ o.name|text_limiter }}</p>
+                    <div class="boxDetails org">
+                        <p class="boxName org">{{ o.name|text_limiter }}</p>
                     </div>
                 </div>
             </a>

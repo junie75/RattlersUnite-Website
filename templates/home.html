@@ -2,12 +2,23 @@
 
 {% block content %}
 
-    <p class="title">Events</p>
+    <div class="listmenu">
+        <p class="title">Events</p>
+        <a href="{{ url_for('main_view.events') }}" class="title seeAll">See all</a>  
+    </div>
+    
     {% include 'modules/events.html' %}
-                    
-    <p class="title">Organizations</p>
+       
+    <div class="listmenu">
+        <p class="title">Organizations</p>
+        <a  href="{{ url_for('main_view.organizations') }}" class="title seeAll">See all</a>   
+    </div>
+    
     {% include 'modules/organizations.html' %}
 
-    {% include 'modules/categories.html' %}
+    <div class="titleBox">
+     {% include 'modules/categories.html' %}   
+    </div>
+    
 
 {% endblock %}

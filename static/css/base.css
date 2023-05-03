@@ -83,21 +83,40 @@ body {
     float: right;
 }
 
+
 /* Title */
+
+.titleBox{
+    margin: 12px;
+    position: relative;
+    display: grid;
+}
 .title{
     color: #fff;
     font-size: 30px;
     position: relative;
     top: 10px;
-    margin: 12px;
     font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Verdana, sans-serif;
     /*text-shadow: 1px 1px 0 #000, -1px -1px 0 #000;*/
 }
 
+/*see all button*/
+.title.seeAll{
+    position: relative;
+    color: #ffffffad;
+    font-size: 10px;
+    text-decoration: underline;
+
+}
+
 /* List Menu */
 div.listmenu {
+    width: 96%;
+    height: fit-content;
+    margin: auto;
     display: flex;
-    overflow: hidden;
+    overflow: visible;
+    padding-top: 20px;
 }
 
 div.listmenu a {
@@ -111,6 +130,9 @@ div.gridmenu {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     overflow-x: hidden;
+    width: 98%;
+    margin:auto;
+    
 }
 
 div.admingridmenu {
@@ -125,7 +147,6 @@ div.admingridmenu {
 div.gridmenu a {
     color: black;
     padding: 14px;
-    margin-left: 20px;
 }
 
 /* modified gridmenu for organization portal*/
@@ -165,7 +186,7 @@ div.gridmenu a {
 /* modified grid menu for prizes page */
 .gridmenu.prizes{
     overflow-x: visible;
-    margin: auto;
+    /*width: 70%;*/
     margin-top: 140px;
     margin-bottom: 100px;
     grid-template-columns: repeat(3, 1fr);
@@ -235,8 +256,9 @@ div.gridmenu a {
     border: 1px solid black;
     background-color: #fff;
     min-height: 350px;
-    max-width: 260px;
-    margin: 15px;
+    min-width: 200px;
+    max-width: 250px;
+    /*margin: 15px auto;*/
     position: relative;
     overflow: hidden;
     box-shadow: 1px 1px 2px #000;
@@ -259,8 +281,19 @@ div.gridmenu a {
     position:absolute;
 }
 
+.boxDetails.org{
+    top: 60%;
+    width: 80%;
+    margin: auto;
+    text-align:center;
+}
+
+.boxName.org{
+    font-size: 23px;
+}
+
 .boxName{
-    font-size: 25px;
+    font-size: 20px;
     padding-bottom: 5px;
     font-weight: bold;
 }
@@ -485,7 +518,9 @@ footer p{
     display: block;
     margin-left: auto;
     margin-right: auto;
+    min-width:180px;
     max-width: 180px;
+    min-height:180px;
     max-height: 180px;
     padding-top: 15px;
 }
