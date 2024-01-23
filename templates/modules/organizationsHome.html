@@ -1,0 +1,21 @@
+<div class="gridmenu scroll">
+  {% if organizations %} {% for o in organizations %}
+  <a href="{{ url_for('main_view.profiledetails', id=o['id']) }}">
+    <div class="contentBox">
+      <img src={{ url_for('uploaded_file', filename=o['icon']) }}
+      class="eventImg"/>
+      <div class="boxDetails">
+        <p class="boxName">{{ o.name|text_limiter }}</p>
+      </div>
+    </div>
+  </a>
+  {% endfor %} {% else %}
+  <div class="noEvent">
+    <div class="textCenter">
+      <p class="noEventText">
+        No organizations are currently available to be displayed.
+      </p>
+    </div>
+  </div>
+  {% endif %}
+</div>
